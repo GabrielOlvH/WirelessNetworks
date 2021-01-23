@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "me.steven.wirelessnetworks.WirelessNetworks"
+    ],
+    "client": [
+      "me.steven.wirelessnetworks.WirelessNetworksClient"
     ]
   },
   "mixins": [

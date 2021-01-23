@@ -10,6 +10,24 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+repositories {
+	maven {
+		name = "CottonMC"
+		url = "https://server.bbkr.space/artifactory/libs-release"
+		content {
+			includeGroup "io.github.cottonmc"
+		}
+	}
+	maven {
+		name = "Technici4n"
+		url = "https://raw.githubusercontent.com/Technici4n/Technici4n-maven/master/"
+		content {
+			includeGroup "net.fabricmc.fabric-api" // FTL needs this too
+			includeGroup "dev.technici4n"
+		}
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -18,6 +36,28 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+
+	modApi ("dev.technici4n:FastTransferLib:${project.ftl_version}") {
+		exclude group: "teamreborn", module: "energy"
+	}
+	include ("dev.technici4n:FastTransferLib:${project.ftl_version}") {
+		exclude group: "teamreborn", module: "energy"
+	}
+	modImplementation("io.github.cottonmc:LibGui:${project.libgui_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+	}
+	include("io.github.cottonmc:LibGui:${project.libgui_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+	}
+
+	modCompile("io.github.prospector:modmenu:${project.modmenu_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+	}
+	modCompile("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+	}
+
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
