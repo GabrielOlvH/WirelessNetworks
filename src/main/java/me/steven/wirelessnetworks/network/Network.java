@@ -10,11 +10,15 @@ public class Network implements EnergyIo {
     private final String id;
     private double energy;
     private double energyCapacity = 10000000;
+    private double maxInput = Double.MAX_VALUE;
+    private double maxOutput = Double.MAX_VALUE;
 
-    private Network(String id, double energy, double energyCapacity) {
+    private Network(String id, double energy, double energyCapacity, double maxInput, double maxOutput) {
         this.id = id;
         this.energy = energy;
         this.energyCapacity = energyCapacity;
+        this.maxInput = maxInput;
+        this.maxOutput = maxOutput;
     }
 
     public Network(String id) {
@@ -46,9 +50,17 @@ public class Network implements EnergyIo {
 
     @Override
     public double insert(double amount, Simulation simulation) {
-        double inserted = Math.min(amount, energyCapacity - energy);
+        double inserted = Math.min(Math.min(amount, maxInput), energyCapacity - energy);
         if (simulation.isActing()) this.energy += amount;
         return amount - inserted;
+    }
+
+    public double getMaxInput() {
+        return maxInput;
+    }
+
+    public void setMaxInput(double maxInput) {
+        this.maxInput = maxInput;
     }
 
     @Override
@@ -58,13 +70,23 @@ public class Network implements EnergyIo {
 
     @Override
     public double extract(double maxAmount, Simulation simulation) {
-        double extracted = Math.min(maxAmount, energy);
+        double extracted = Math.min(Math.min(maxAmount, maxOutput), energy);
         if (simulation.isActing()) this.energy -= extracted;
         return extracted;
     }
 
+    public double getMaxOutput() {
+        return maxOutput;
+    }
+
+    public void setMaxOutput(double maxOutput) {
+        this.maxOutput = maxOutput;
+    }
+
     public void writeScreenData(PacketByteBuf buf) {
         buf.writeDouble(energyCapacity);
+        buf.writeDouble(maxInput);
+        buf.writeDouble(maxOutput);
     }
 
     public CompoundTag toTag() {
@@ -72,6 +94,8 @@ public class Network implements EnergyIo {
         tag.putDouble("energy", energy);
         tag.putDouble("energyCapacity", energyCapacity);
         tag.putString("id", id);
+        tag.putDouble("maxInput", maxInput);
+        tag.putDouble("maxOutput", maxOutput);
         return tag;
     }
 
@@ -79,6 +103,8 @@ public class Network implements EnergyIo {
         double energy = tag.getDouble("energy");
         double energyCapacity = tag.getDouble("energyCapacity");
         String id = tag.getString("id");
-        return new Network(id, energy, energyCapacity);
+        double maxInput = tag.getDouble("maxInput");
+        double maxOutput = tag.getDouble("maxOutput");
+        return new Network(id, energy, energyCapacity, maxInput, maxOutput);
     }
 }

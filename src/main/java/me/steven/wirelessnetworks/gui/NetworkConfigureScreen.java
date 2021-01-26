@@ -18,7 +18,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
 
     private WTextField networkIdField = null;
 
-    public NetworkConfigureScreen(BlockPos pos, @Nullable String networkId, double energyCapacity, int syncId, PlayerInventory playerInventory) {
+    public NetworkConfigureScreen(BlockPos pos, @Nullable String networkId, double energyCapacity, double maxInput, double maxOutput, int syncId, PlayerInventory playerInventory) {
         super(WirelessNetworks.CONFIGURE_SCREEN_TYPE, syncId, playerInventory);
         WGridPanel panel = new WGridPanel();
         this.rootPanel = panel;
@@ -45,6 +45,34 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         panel.add(energyCapacityField, 0, 2);
         energyCapacityField.setSize(60, 20);
 
+
+        WTextField maxInputField = new WTextField();
+        maxInputField.setText(String.valueOf((int) maxInput));
+        maxInputField.setTextPredicate((s) -> {
+            try {
+                Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            return true;
+        });
+        panel.add(maxInputField, 0, 3);
+        maxInputField.setSize(60, 20);
+
+        WTextField maxOutputField = new WTextField();
+        maxOutputField.setText(String.valueOf((int) maxOutput));
+        maxOutputField.setTextPredicate((s) -> {
+            try {
+                Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            return true;
+        });
+        panel.add(maxOutputField, 0, 4);
+        maxOutputField.setSize(60, 20);
+
+
         WButton save = new WButton();
         save.setLabel(new LiteralText("Save"));
         save.setOnClick(() -> {
@@ -52,6 +80,8 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             buf.writeBlockPos(pos);
             buf.writeString(networkIdField != null ? networkIdField.getText() : networkId);
             buf.writeDouble(Double.parseDouble(energyCapacityField.getText()));
+            buf.writeDouble(Double.parseDouble(maxInputField.getText()));
+            buf.writeDouble(Double.parseDouble(maxOutputField.getText()));
             ClientPlayNetworking.send(PacketHelper.UPDATE_NETWORK, buf);
         });
         panel.add(save, 4, 4);

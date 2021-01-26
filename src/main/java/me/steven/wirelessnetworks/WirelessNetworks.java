@@ -52,7 +52,9 @@ public class WirelessNetworks implements ModInitializer {
 				boolean isNewNetwork = buf.readBoolean();
 				String networkId = isNewNetwork ? null : buf.readString();
 				double energyCapacity = buf.readDouble();
-				return new NetworkConfigureScreen(pos, networkId, energyCapacity, syncId, inventory);
+				double maxInput = buf.readDouble();
+				double maxOutput = buf.readDouble();
+				return new NetworkConfigureScreen(pos, networkId, energyCapacity, maxInput, maxOutput, syncId, inventory);
 			});
 
 	@Override

@@ -45,6 +45,8 @@ public class PacketHelper {
                             network.writeScreenData(buf);
                         else {
                             buf.writeDouble(1000000);
+                            buf.writeDouble(Double.MAX_VALUE);
+                            buf.writeDouble(Double.MAX_VALUE);
                         }
                     }
 
@@ -62,6 +64,8 @@ public class PacketHelper {
                             network.writeScreenData(buf);
                         else {
                             buf.writeDouble(1000000);
+                            buf.writeDouble(Double.MAX_VALUE);
+                            buf.writeDouble(Double.MAX_VALUE);
                         }
                         return WirelessNetworks.CONFIGURE_SCREEN_TYPE.create(syncId, inv, buf);
                     }
@@ -73,10 +77,14 @@ public class PacketHelper {
             BlockPos pos = buf.readBlockPos();
             String networkId = buf.readString();
             double capacity = buf.readDouble();
+            double maxInput = buf.readDouble();
+            double maxOutput = buf.readDouble();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate((ServerWorld) player.world);
                 Network network = state.getOrCreateNetworkHandler(networkId);
                 network.setEnergyCapacity(capacity);
+                network.setMaxInput(maxInput);
+                network.setMaxOutput(maxOutput);
                 state.markDirty();
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
