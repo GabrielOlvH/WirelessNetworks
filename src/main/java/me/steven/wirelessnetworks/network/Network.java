@@ -46,7 +46,9 @@ public class Network implements EnergyIo {
 
     @Override
     public double insert(double amount, Simulation simulation) {
-        return 0;
+        double inserted = Math.min(amount, energyCapacity - energy);
+        if (simulation.isActing()) this.energy += amount;
+        return amount - inserted;
     }
 
     @Override
@@ -56,7 +58,9 @@ public class Network implements EnergyIo {
 
     @Override
     public double extract(double maxAmount, Simulation simulation) {
-        return 0;
+        double extracted = Math.min(maxAmount, energy);
+        if (simulation.isActing()) this.energy -= extracted;
+        return extracted;
     }
 
     public void writeScreenData(PacketByteBuf buf) {
