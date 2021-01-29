@@ -3,9 +3,8 @@ package me.steven.wirelessnetworks.network;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +29,10 @@ public class NetworkState extends PersistentState {
         return networks.computeIfAbsent(id, (n) -> new Network(id));
     }
 
+    public Network delete(String id) {
+        return networks.remove(id);
+    }
+
     public Map<String, Network> getNetworks() {
         return ImmutableMap.copyOf(networks);
     }
@@ -51,7 +54,7 @@ public class NetworkState extends PersistentState {
         return tag;
     }
 
-    public static NetworkState getOrCreate(ServerWorld world) {
-        return world.getPersistentStateManager().getOrCreate(NetworkState::new, KEY);
+    public static NetworkState getOrCreate(MinecraftServer server) {
+        return server.getOverworld().getPersistentStateManager().getOrCreate(NetworkState::new, KEY);
     }
 }

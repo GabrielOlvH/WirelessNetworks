@@ -6,19 +6,14 @@ import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -50,7 +45,7 @@ public class WirelessNetworks implements ModInitializer {
 			ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "configure_node_screen"), (syncId, inventory, buf) -> {
 				BlockPos pos = buf.readBlockPos();
 				boolean isNewNetwork = buf.readBoolean();
-				String networkId = isNewNetwork ? null : buf.readString();
+				String networkId = isNewNetwork ? null : buf.readString(32767);
 				double energyCapacity = buf.readDouble();
 				double maxInput = buf.readDouble();
 				double maxOutput = buf.readDouble();

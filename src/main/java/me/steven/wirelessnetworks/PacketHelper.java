@@ -1,7 +1,6 @@
 package me.steven.wirelessnetworks;
 
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
-import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -13,13 +12,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.Set;
 
 public class PacketHelper {
 
@@ -29,13 +25,15 @@ public class PacketHelper {
 
     public static final Identifier SELECT_NETWORK = new Identifier(WirelessNetworks.MOD_ID, "select_network");
 
+    public static final Identifier DELETE_NETWORK = new Identifier(WirelessNetworks.MOD_ID, "delete_network");
+
     public static void registerServer() {
         ServerPlayNetworking.registerGlobalReceiver(OPEN_CONFIGURE_SCREEN, (server, player, networkHandler, buf, sender) -> {
             BlockPos blockPos = buf.readBlockPos();
             boolean isNewNetwork = buf.readBoolean();
-            String networkId = isNewNetwork ? null : buf.readString();
+            String networkId = isNewNetwork ? null : buf.readString(32767);
             server.execute(() -> {
-                Network network = isNewNetwork ? null : NetworkState.getOrCreate(((ServerWorld) player.world)).getNetworkHandler(networkId).get();
+                Network network = isNewNetwork ? null : NetworkState.getOrCreate(server).getNetworkHandler(networkId).get();
                 player.openHandledScreen(new ExtendedScreenHandlerFactory() {
                     @Override
                     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
@@ -56,17 +54,9 @@ public class PacketHelper {
                     }
 
                     @Override
-                    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+                    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity p) {
                         PacketByteBuf buf = PacketByteBufs.create();
-                        buf.writeBlockPos(blockPos);
-                        buf.writeBoolean(isNewNetwork);
-                        if (network != null)
-                            network.writeScreenData(buf);
-                        else {
-                            buf.writeDouble(1000000);
-                            buf.writeDouble(Double.MAX_VALUE);
-                            buf.writeDouble(Double.MAX_VALUE);
-                        }
+                        writeScreenOpeningData(player, buf);
                         return WirelessNetworks.CONFIGURE_SCREEN_TYPE.create(syncId, inv, buf);
                     }
                 });
@@ -75,12 +65,12 @@ public class PacketHelper {
 
         ServerPlayNetworking.registerGlobalReceiver(UPDATE_NETWORK, (server, player, networkHandler, buf, sender) -> {
             BlockPos pos = buf.readBlockPos();
-            String networkId = buf.readString();
+            String networkId = buf.readString(32767);
             double capacity = buf.readDouble();
             double maxInput = buf.readDouble();
             double maxOutput = buf.readDouble();
             server.execute(() -> {
-                NetworkState state = NetworkState.getOrCreate((ServerWorld) player.world);
+                NetworkState state = NetworkState.getOrCreate(server);
                 Network network = state.getOrCreateNetworkHandler(networkId);
                 network.setEnergyCapacity(capacity);
                 network.setMaxInput(maxInput);
@@ -95,13 +85,27 @@ public class PacketHelper {
 
         ServerPlayNetworking.registerGlobalReceiver(SELECT_NETWORK, (server, player, networkHandler, buf, sender) -> {
             BlockPos pos = buf.readBlockPos();
-            String networkId = buf.readString();
+            String networkId = buf.readString(32767);
             server.execute(() -> {
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     ((NetworkNodeBlockEntity) blockEntity).setNetworkId(networkId);
                     blockEntity.markDirty();
                     ((NetworkNodeBlockEntity) blockEntity).sync();
+                }
+            });
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(DELETE_NETWORK, (server, player, networkHandler, buf, sender) -> {
+            String networkId = buf.readString(32767);
+            BlockPos pos = buf.readBlockPos();
+            server.execute(() -> {
+                NetworkState state = NetworkState.getOrCreate(server);
+                state.delete(networkId);
+                state.markDirty();
+                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                if (blockEntity instanceof NetworkNodeBlockEntity) {
+                    player.openHandledScreen((NetworkNodeBlockEntity) blockEntity);
                 }
             });
         });

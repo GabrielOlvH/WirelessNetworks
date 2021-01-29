@@ -84,6 +84,7 @@ public class Network implements EnergyIo {
     }
 
     public void writeScreenData(PacketByteBuf buf) {
+        buf.writeString(id);
         buf.writeDouble(energyCapacity);
         buf.writeDouble(maxInput);
         buf.writeDouble(maxOutput);
