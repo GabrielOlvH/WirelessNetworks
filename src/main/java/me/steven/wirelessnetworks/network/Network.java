@@ -7,11 +7,13 @@ import net.minecraft.network.PacketByteBuf;
 
 public class Network implements EnergyIo {
 
+    private static final double DEFAULT_MAX_ENERGY = 1_000_000;
+
     private final String id;
     private double energy;
-    private double energyCapacity = 10000000;
-    private double maxInput = Double.MAX_VALUE;
-    private double maxOutput = Double.MAX_VALUE;
+    private double energyCapacity = DEFAULT_MAX_ENERGY;
+    private double maxInput = DEFAULT_MAX_ENERGY;
+    private double maxOutput = DEFAULT_MAX_ENERGY;
 
     private Network(String id, double energy, double energyCapacity, double maxInput, double maxOutput) {
         this.id = id;
@@ -60,7 +62,7 @@ public class Network implements EnergyIo {
     }
 
     public void setMaxInput(double maxInput) {
-        this.maxInput = maxInput;
+        this.maxInput = Math.min(maxInput, energyCapacity);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class Network implements EnergyIo {
     }
 
     public void setMaxOutput(double maxOutput) {
-        this.maxOutput = maxOutput;
+        this.maxOutput = Math.min(maxOutput, energyCapacity);
     }
 
     public void writeScreenData(PacketByteBuf buf) {
