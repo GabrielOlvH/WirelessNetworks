@@ -21,8 +21,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Nameable, ExtendedScreenHandlerFactory, BlockEntityClientSerializable {
 
@@ -66,7 +68,13 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeBlockPos(pos);
-        Set<String> keys = NetworkState.getOrCreate(((ServerWorld) world).getServer()).getNetworks().keySet();
+        Set<String> keys = NetworkState.getOrCreate(((ServerWorld) world).getServer())
+                .getNetworks()
+                .entrySet()
+                .stream()
+                .filter((entry) -> entry.getValue().canInteract(player))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
         buf.writeInt(keys.size());
         keys.forEach(buf::writeString);
     }

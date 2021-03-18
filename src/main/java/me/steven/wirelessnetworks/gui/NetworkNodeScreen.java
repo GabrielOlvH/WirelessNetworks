@@ -9,6 +9,7 @@ import me.steven.wirelessnetworks.PacketHelper;
 import me.steven.wirelessnetworks.WirelessNetworks;
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.widgets.WNetworkListEntry;
+import me.steven.wirelessnetworks.utils.Utils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.entity.BlockEntity;
@@ -34,15 +35,15 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         String[] selectedNetworkId = {null};
         if (blockEntity instanceof NetworkNodeBlockEntity) {
             selectedNetworkId[0] = ((NetworkNodeBlockEntity) blockEntity).getNetworkId();
-            if (selectedNetworkId[0] != null) {
-                label.setText(new LiteralText(selectedNetworkId[0]));
+            if (selectedNetworkId[0] != null && networks.contains(selectedNetworkId[0])) {
+                label.setText(new LiteralText(Utils.getDisplayId(selectedNetworkId[0])));
             }
         }
         panel.add(label, 0, 1);
         WListPanel<String, WNetworkListEntry> list = new WListPanel<>(networks, WNetworkListEntry::new, (networkId, entry) -> {
-            entry.setText(new LiteralText(networkId));
+            entry.setText(new LiteralText(Utils.getDisplayId(networkId)));
             entry.setClickAction(() -> {
-                label.setText(new LiteralText(networkId));
+                label.setText(new LiteralText(Utils.getDisplayId(networkId)));
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBlockPos(pos);
                 buf.writeString(networkId);

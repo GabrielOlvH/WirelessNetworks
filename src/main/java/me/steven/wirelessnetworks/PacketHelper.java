@@ -42,9 +42,11 @@ public class PacketHelper {
                         if (network != null)
                             network.writeScreenData(buf);
                         else {
-                            buf.writeDouble(1000000);
-                            buf.writeDouble(Double.MAX_VALUE);
-                            buf.writeDouble(Double.MAX_VALUE);
+                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
+                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
+                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
+                            buf.writeBoolean(true);
+                            buf.writeUuid(player.getUuid());
                         }
                     }
 
@@ -69,12 +71,17 @@ public class PacketHelper {
             double capacity = buf.readDouble();
             double maxInput = buf.readDouble();
             double maxOutput = buf.readDouble();
+            boolean isProtected = buf.readBoolean();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
-                Network network = state.getOrCreateNetworkHandler(networkId);
+                Network network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
                 network.setEnergyCapacity(capacity);
                 network.setMaxInput(maxInput);
                 network.setMaxOutput(maxOutput);
+                if (isProtected && !network.isProtected())
+                    network.markProtected(state);
+                else if (!isProtected && network.isProtected())
+                    network.markPublic(state);
                 state.markDirty();
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {

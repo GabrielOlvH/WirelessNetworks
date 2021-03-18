@@ -20,6 +20,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class WirelessNetworks implements ModInitializer {
 
@@ -49,7 +50,9 @@ public class WirelessNetworks implements ModInitializer {
 				double energyCapacity = buf.readDouble();
 				double maxInput = buf.readDouble();
 				double maxOutput = buf.readDouble();
-				return new NetworkConfigureScreen(pos, networkId, energyCapacity, maxInput, maxOutput, syncId, inventory);
+				boolean isProtected = buf.readBoolean();
+				UUID owner = buf.readUuid();
+				return new NetworkConfigureScreen(pos, networkId, owner, isProtected, energyCapacity, maxInput, maxOutput, syncId, inventory);
 			});
 
 	@Override

@@ -9,6 +9,7 @@ import net.minecraft.world.PersistentState;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class NetworkState extends PersistentState {
 
@@ -25,12 +26,16 @@ public class NetworkState extends PersistentState {
         return Optional.of(networks.get(id));
     }
 
-    public Network getOrCreateNetworkHandler(String id) {
-        return networks.computeIfAbsent(id, (n) -> new Network(id));
+    public Network getOrCreateNetworkHandler(String id, UUID uuid) {
+        return networks.computeIfAbsent(id, (n) -> new Network(id, uuid));
     }
 
     public Network delete(String id) {
         return networks.remove(id);
+    }
+
+    public void put(String id, Network network) {
+        networks.put(id, network);
     }
 
     public Map<String, Network> getNetworks() {

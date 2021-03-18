@@ -2,29 +2,37 @@ package me.steven.wirelessnetworks.network;
 
 import dev.technici4n.fasttransferlib.api.Simulation;
 import dev.technici4n.fasttransferlib.api.energy.EnergyIo;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 
+import java.util.UUID;
+
 public class Network implements EnergyIo {
 
-    private static final double DEFAULT_MAX_ENERGY = 1_000_000;
+    public static final double DEFAULT_MAX_ENERGY = 1_000_000;
 
-    private final String id;
+    private String id;
+    private boolean isProtected;
+    private final UUID owner;
     private double energy;
     private double energyCapacity = DEFAULT_MAX_ENERGY;
     private double maxInput = DEFAULT_MAX_ENERGY;
     private double maxOutput = DEFAULT_MAX_ENERGY;
 
-    private Network(String id, double energy, double energyCapacity, double maxInput, double maxOutput) {
+    private Network(String id, boolean isProtected, UUID owner, double energy, double energyCapacity, double maxInput, double maxOutput) {
         this.id = id;
+        this.isProtected = isProtected;
+        this.owner = owner;
         this.energy = energy;
         this.energyCapacity = energyCapacity;
         this.maxInput = maxInput;
         this.maxOutput = maxOutput;
     }
 
-    public Network(String id) {
+    public Network(String id, UUID owner) {
         this.id = id;
+        this.owner = owner;
     }
 
     public String getId() {
@@ -85,11 +93,45 @@ public class Network implements EnergyIo {
         this.maxOutput = Math.min(maxOutput, energyCapacity);
     }
 
+    // id is modified so multiple players can have the same name as their private network eg "Base" or whatever
+    // this will disconnected any previously connected nodes too
+    public void markProtected(NetworkState state) {
+        if (!isProtected) {
+            this.isProtected = true;
+            state.delete(id);
+            this.id = owner.toString() + ":" + id;
+            state.put(id, this);
+        }
+    }
+
+    public void markPublic(NetworkState state) {
+        if (isProtected) {
+            this.isProtected = false;
+            state.delete(id);
+            this.id = id.substring(owner.toString().length() + 1);
+            state.put(id, this);
+        }
+    }
+
+    public boolean isProtected() {
+        return isProtected;
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public boolean canInteract(PlayerEntity player) {
+        return player.abilities.creativeMode || !isProtected || owner.equals(player.getUuid());
+    }
+
     public void writeScreenData(PacketByteBuf buf) {
         buf.writeString(id);
         buf.writeDouble(energyCapacity);
         buf.writeDouble(maxInput);
         buf.writeDouble(maxOutput);
+        buf.writeBoolean(isProtected);
+        buf.writeUuid(owner);
     }
 
     public CompoundTag toTag() {
@@ -97,6 +139,8 @@ public class Network implements EnergyIo {
         tag.putDouble("energy", energy);
         tag.putDouble("energyCapacity", energyCapacity);
         tag.putString("id", id);
+        tag.putUuid("owner", owner);
+        tag.putBoolean("protected", isProtected);
         tag.putDouble("maxInput", maxInput);
         tag.putDouble("maxOutput", maxOutput);
         return tag;
@@ -108,6 +152,8 @@ public class Network implements EnergyIo {
         String id = tag.getString("id");
         double maxInput = tag.getDouble("maxInput");
         double maxOutput = tag.getDouble("maxOutput");
-        return new Network(id, energy, energyCapacity, maxInput, maxOutput);
+        boolean isProtected = tag.getBoolean("protected");
+        UUID playerUuid = tag.getUuid("owner");
+        return new Network(id, isProtected, playerUuid, energy, energyCapacity, maxInput, maxOutput);
     }
 }
