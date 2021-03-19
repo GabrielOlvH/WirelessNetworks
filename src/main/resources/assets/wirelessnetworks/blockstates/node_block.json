@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "wirelessnetworks:block/node_block",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "wirelessnetworks:block/node_block"
+    },
+    "facing=west": {
+      "model": "wirelessnetworks:block/node_block",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "wirelessnetworks:block/node_block",
+      "y": 270
+    }
+  }
+}
