@@ -39,7 +39,12 @@ public class PacketHelper {
                     }
                     network = optional.get();
                 }
-                player.openHandledScreen(new NetworkConfigureScreenFactory(blockPos, network, player));
+                if (network != null && network.getOwner().equals(player.getUuid()))
+                    player.openHandledScreen(new NetworkConfigureScreenFactory(blockPos, network, player));
+                else
+                    //TODO implement warning into GUIs.
+                    player.sendMessage(new LiteralText("You cannot modify networks you do not own."), false);
+
             });
         });
 
