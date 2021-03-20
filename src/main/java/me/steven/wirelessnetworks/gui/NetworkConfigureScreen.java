@@ -61,6 +61,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         save.setOnClick(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
+            buf.writeBoolean(networkId == null);
             buf.writeString(networkIdField != null ? Utils.sanitizeId(networkIdField.getText()) : networkId);
             buf.writeDouble(Double.parseDouble(energyCapacityField.getText()));
             buf.writeDouble(Double.parseDouble(maxInputField.getText()));

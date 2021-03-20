@@ -1,21 +1,16 @@
 package me.steven.wirelessnetworks;
 
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
+import me.steven.wirelessnetworks.gui.NetworkConfigureScreenFactory;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
 
 public class PacketHelper {
 
@@ -33,40 +28,24 @@ public class PacketHelper {
             boolean isNewNetwork = buf.readBoolean();
             String networkId = isNewNetwork ? null : buf.readString(32767);
             server.execute(() -> {
-                Network network = isNewNetwork ? null : NetworkState.getOrCreate(server).getNetworkHandler(networkId).get();
-                player.openHandledScreen(new ExtendedScreenHandlerFactory() {
-                    @Override
-                    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-                        buf.writeBlockPos(blockPos);
-                        buf.writeBoolean(isNewNetwork);
-                        if (network != null)
-                            network.writeScreenData(buf);
-                        else {
-                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
-                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
-                            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
-                            buf.writeBoolean(true);
-                            buf.writeUuid(player.getUuid());
-                        }
+                Network network;
+                if (isNewNetwork) network = null;
+                else {
+                    Optional<Network> optional = NetworkState.getOrCreate(server).getNetworkHandler(networkId);
+                    if (!optional.isPresent()) {
+                        //TODO implement warning into GUIs.
+                        player.sendMessage(new LiteralText("This network no longer exists."), false);
+                        return;
                     }
-
-                    @Override
-                    public Text getDisplayName() {
-                        return new LiteralText("get fucked idiot");
-                    }
-
-                    @Override
-                    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity p) {
-                        PacketByteBuf buf = PacketByteBufs.create();
-                        writeScreenOpeningData(player, buf);
-                        return WirelessNetworks.CONFIGURE_SCREEN_TYPE.create(syncId, inv, buf);
-                    }
-                });
+                    network = optional.get();
+                }
+                player.openHandledScreen(new NetworkConfigureScreenFactory(blockPos, network, player));
             });
         });
 
         ServerPlayNetworking.registerGlobalReceiver(UPDATE_NETWORK, (server, player, networkHandler, buf, sender) -> {
             BlockPos pos = buf.readBlockPos();
+            boolean isCreating = buf.readBoolean();
             String networkId = buf.readString(32767);
             double capacity = buf.readDouble();
             double maxInput = buf.readDouble();
@@ -74,7 +53,18 @@ public class PacketHelper {
             boolean isProtected = buf.readBoolean();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
-                Network network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
+                Network network;
+                if (isCreating) {
+                    network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
+                } else {
+                    Optional<Network> optional = state.getNetworkHandler(networkId);
+                    if (!optional.isPresent()) {
+                        //TODO implement warning into GUIs.
+                        player.sendMessage(new LiteralText("This network no longer exists."), false);
+                        return;
+                    }
+                    network = optional.get();
+                }
                 network.setEnergyCapacity(capacity);
                 network.setMaxInput(maxInput);
                 network.setMaxOutput(maxOutput);
@@ -94,6 +84,13 @@ public class PacketHelper {
             BlockPos pos = buf.readBlockPos();
             String networkId = buf.readString(32767);
             server.execute(() -> {
+                NetworkState state = NetworkState.getOrCreate(server);
+                Optional<Network> optional = state.getNetworkHandler(networkId);
+                if (!optional.isPresent()) {
+                    //TODO implement warning into GUIs.
+                    player.sendMessage(new LiteralText("This network no longer exists."), false);
+                    return;
+                }
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     ((NetworkNodeBlockEntity) blockEntity).setNetworkId(networkId);
