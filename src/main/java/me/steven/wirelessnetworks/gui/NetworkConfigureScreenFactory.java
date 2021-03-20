@@ -30,7 +30,7 @@ public class NetworkConfigureScreenFactory implements ExtendedScreenHandlerFacto
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeBoolean(network != null);
+        buf.writeBoolean(network == null);
         if (network != null)
             network.writeScreenData(buf);
         else {

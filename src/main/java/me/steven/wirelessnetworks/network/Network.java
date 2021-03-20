@@ -125,6 +125,10 @@ public class Network implements EnergyIo {
         return player.abilities.creativeMode || !isProtected || owner.equals(player.getUuid());
     }
 
+    public boolean canModify(PlayerEntity player) {
+        return player.abilities.creativeMode || owner.equals(player.getUuid());
+    }
+
     public void writeScreenData(PacketByteBuf buf) {
         buf.writeString(id);
         buf.writeDouble(energyCapacity);

@@ -43,10 +43,10 @@ public class WNetworkListEntry extends WWidget {
 
     @Override
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        ScreenDrawing.drawBeveledPanel(x, y, width, height);
+        //ScreenDrawing.drawBeveledPanel(x, y, width, height);
         if (isSelected.get()) ScreenDrawing.coloredRect(x, y, width, height, 0x22000099);
         ScreenDrawing.drawStringWithShadow(matrices, text.asOrderedText(),
-                HorizontalAlignment.CENTER, x, y + ((height - 8) / 2),
+                HorizontalAlignment.LEFT, x, y + ((height - 8) / 2),
                 width, WLabel.DEFAULT_DARKMODE_TEXT_COLOR);
     }
 

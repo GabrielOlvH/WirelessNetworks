@@ -2,11 +2,16 @@ package me.steven.wirelessnetworks;
 
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.NetworkConfigureScreenFactory;
+import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -22,6 +27,8 @@ public class PacketHelper {
 
     public static final Identifier DELETE_NETWORK = new Identifier(WirelessNetworks.MOD_ID, "delete_network");
 
+    public static final Identifier WARNING_PACKET = new Identifier(WirelessNetworks.MOD_ID, "warning_packet");
+
     public static void registerServer() {
         ServerPlayNetworking.registerGlobalReceiver(OPEN_CONFIGURE_SCREEN, (server, player, networkHandler, buf, sender) -> {
             BlockPos blockPos = buf.readBlockPos();
@@ -33,17 +40,15 @@ public class PacketHelper {
                 else {
                     Optional<Network> optional = NetworkState.getOrCreate(server).getNetworkHandler(networkId);
                     if (!optional.isPresent()) {
-                        //TODO implement warning into GUIs.
-                        player.sendMessage(new LiteralText("This network no longer exists."), false);
+                        sendWarning("This network no longer exists", player);
                         return;
                     }
                     network = optional.get();
                 }
-                if (network != null && network.getOwner().equals(player.getUuid()))
+                if (network == null || network.canModify(player))
                     player.openHandledScreen(new NetworkConfigureScreenFactory(blockPos, network, player));
                 else
-                    //TODO implement warning into GUIs.
-                    player.sendMessage(new LiteralText("You cannot modify networks you do not own."), false);
+                    sendWarning("You cannot modify networks you do not own.", player);
 
             });
         });
@@ -64,11 +69,14 @@ public class PacketHelper {
                 } else {
                     Optional<Network> optional = state.getNetworkHandler(networkId);
                     if (!optional.isPresent()) {
-                        //TODO implement warning into GUIs.
-                        player.sendMessage(new LiteralText("This network no longer exists."), false);
+                        sendWarning("This network no longer exists", player);
                         return;
                     }
                     network = optional.get();
+                }
+                if (!network.canModify(player)) {
+                    sendWarning("You cannot modify networks you do not own.", player);
+                    return;
                 }
                 network.setEnergyCapacity(capacity);
                 network.setMaxInput(maxInput);
@@ -92,8 +100,10 @@ public class PacketHelper {
                 NetworkState state = NetworkState.getOrCreate(server);
                 Optional<Network> optional = state.getNetworkHandler(networkId);
                 if (!optional.isPresent()) {
-                    //TODO implement warning into GUIs.
-                    player.sendMessage(new LiteralText("This network no longer exists."), false);
+                    sendWarning("This network no longer exists", player);
+                    return;
+                } else if (!optional.get().canInteract(player)) {
+                    sendWarning("You cannot use this network. This should not have happened", player);
                     return;
                 }
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
@@ -110,6 +120,14 @@ public class PacketHelper {
             BlockPos pos = buf.readBlockPos();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
+                Optional<Network> optional = state.getNetworkHandler(networkId);
+                if (!optional.isPresent()) {
+                    sendWarning("This network no longer exists", player);
+                    return;
+                } else if (!optional.get().canModify(player)) {
+                    sendWarning("You cannot modify networks you do not own.", player);
+                    return;
+                }
                 state.delete(networkId);
                 state.markDirty();
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
@@ -118,5 +136,25 @@ public class PacketHelper {
                 }
             });
         });
+    }
+
+    public static void registerClient() {
+        ClientPlayNetworking.registerGlobalReceiver(WARNING_PACKET, (client, networkHandler, buf, packetSender) -> {
+            String warning = buf.readString();
+            client.execute(() -> {
+                ScreenHandler currentScreenHandler = client.player.currentScreenHandler;
+                if (currentScreenHandler instanceof NetworkNodeScreen) {
+                    ((NetworkNodeScreen) currentScreenHandler).warning.text = warning;
+                    ((NetworkNodeScreen) currentScreenHandler).warning.ticksRemaining = 400;
+                }
+            });
+        });
+    }
+
+    private static void sendWarning(String warning, ServerPlayerEntity player) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeString(warning);
+        ServerPlayNetworking.send(player, WARNING_PACKET, buf);
+
     }
 }
