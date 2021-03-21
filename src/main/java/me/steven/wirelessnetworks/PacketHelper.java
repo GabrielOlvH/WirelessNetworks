@@ -1,6 +1,7 @@
 package me.steven.wirelessnetworks;
 
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
+import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.gui.NetworkConfigureScreenFactory;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.Network;
@@ -63,6 +64,10 @@ public class PacketHelper {
             boolean isProtected = buf.readBoolean();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
+                if (networkId.isEmpty()) {
+                    sendWarning("Network ID cannot be empty.", player);
+                    return;
+                }
                 Network network;
                 if (isCreating) {
                     network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
@@ -146,6 +151,9 @@ public class PacketHelper {
                 if (currentScreenHandler instanceof NetworkNodeScreen) {
                     ((NetworkNodeScreen) currentScreenHandler).warning.text = warning;
                     ((NetworkNodeScreen) currentScreenHandler).warning.ticksRemaining = 400;
+                } else if (currentScreenHandler instanceof NetworkConfigureScreen) {
+                    ((NetworkConfigureScreen) currentScreenHandler).warning.text = warning;
+                    ((NetworkConfigureScreen) currentScreenHandler).warning.ticksRemaining = 400;
                 }
             });
         });

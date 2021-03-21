@@ -2,7 +2,7 @@ package me.steven.wirelessnetworks.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
-import io.github.cottonmc.cotton.gui.widget.WButton;
+import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.WListPanel;
@@ -11,6 +11,7 @@ import me.steven.wirelessnetworks.WirelessNetworks;
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.widgets.WConfigScreenListPanel;
 import me.steven.wirelessnetworks.gui.widgets.WNetworkListEntry;
+import me.steven.wirelessnetworks.gui.widgets.WNoBGButton;
 import me.steven.wirelessnetworks.gui.widgets.WWarning;
 import me.steven.wirelessnetworks.utils.Utils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -27,6 +28,10 @@ import java.util.List;
 public class NetworkNodeScreen extends SyncedGuiDescription {
 
     private static final Identifier TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/select_network_screen.png");
+
+    private static final Identifier ADD_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_add.png");
+    private static final Identifier DELETE_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_delete.png");
+    private static final Identifier EDIT_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_edit.png");
 
     public final WWarning warning = new WWarning();
 
@@ -70,8 +75,12 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         list.setLocation(0, 18 + 18 + 12);
         list.setSize(92, 119);
 
-        WButton createButton = new WButton();
-        createButton.setLabel(new LiteralText("Create network"));
+        WNoBGButton createButton = new WNoBGButton() {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                tooltip.add(new LiteralText("Create network"));
+            }
+        };
         createButton.setOnClick(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
@@ -79,10 +88,16 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             ClientPlayNetworking.send(PacketHelper.OPEN_CONFIGURE_SCREEN, buf);
         });
         panel.add(createButton, 5, 10);
-        createButton.setLocation(5 * 18, 9 * 18 + 9);
+        createButton.setLocation(5 * 18 + 9, 9 * 18 + 12);
+        createButton.setSize(8, 8);
+        createButton.setIcon(ADD_TEXTURE_ID);
 
-        WButton configureButton = new WButton();
-        configureButton.setLabel(new LiteralText("Edit network"));
+        WNoBGButton configureButton = new WNoBGButton() {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                tooltip.add(new LiteralText("Edit network"));
+            }
+        };
         configureButton.setOnClick(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
@@ -91,10 +106,16 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             ClientPlayNetworking.send(PacketHelper.OPEN_CONFIGURE_SCREEN, buf);
         });
         panel.add(configureButton, 4, 10);
-        configureButton.setLocation(4 * 18, 9 * 18 + 9);
+        configureButton.setLocation(4 * 18 + 9, 9 * 18 + 12);
+        configureButton.setSize(8, 8);
+        configureButton.setIcon(EDIT_TEXTURE_ID);
 
-        WButton deleteNetwork = new WButton();
-        deleteNetwork.setLabel(new LiteralText("Delete network"));
+        WNoBGButton deleteNetwork = new WNoBGButton() {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                tooltip.add(new LiteralText("Delete network"));
+            }
+        };
         deleteNetwork.setOnClick(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeString(selectedNetworkId[0]);
@@ -102,7 +123,9 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             ClientPlayNetworking.send(PacketHelper.DELETE_NETWORK, buf);
         });
         panel.add(deleteNetwork, 3, 10);
-        deleteNetwork.setLocation(3 * 18, 9 * 18 + 9);
+        deleteNetwork.setLocation(3 * 18 + 9, 9 * 18 + 12);
+        deleteNetwork.setSize(8, 8);
+        deleteNetwork.setIcon(DELETE_TEXTURE_ID);
 
         panel.validate(this);
     }
