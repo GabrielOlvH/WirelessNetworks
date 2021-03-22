@@ -69,10 +69,14 @@ public class PacketHelper {
                     return;
                 }
                 Network network;
+                Optional<Network> optional = state.getNetworkHandler(networkId);
                 if (isCreating) {
+                    if (optional.isPresent()) {
+                        sendWarning("A network with this ID already exists", player);
+                        return;
+                    }
                     network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
                 } else {
-                    Optional<Network> optional = state.getNetworkHandler(networkId);
                     if (!optional.isPresent()) {
                         sendWarning("This network no longer exists", player);
                         return;
