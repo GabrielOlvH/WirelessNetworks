@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NNN",
+    "IWI",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:iron_ingot"
+    },
+    "I": {
+      "item": "minecraft:redstone"
+    },
+    "W": {
+      "item": "wirelessnetworks:entangled_capacitor"
+    }
+  },
+  "result": {
+    "item": "wirelessnetworks:node_block",
+    "count": 1
+  }
+}

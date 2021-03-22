@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SES",
+    "ENE",
+    "SES"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "S": {
+      "item": "minecraft:basalt"
+    }
+  },
+  "result": {
+    "item": "wirelessnetworks:entangled_capacitor",
+    "count": 2
+  }
+}
