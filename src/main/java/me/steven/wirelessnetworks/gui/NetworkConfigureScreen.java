@@ -26,8 +26,8 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
 
     private static final Identifier TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/configure_network_screen.png");
     private static final Identifier SAVE_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_save.png");
-    private static final Identifier PRIVATE_TEXTURE_ID =new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_private.png");
-    private static final Identifier PUBLIC_TEXTURE_ID =new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_public.png");
+    private static final Identifier PRIVATE_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_private.png");
+    private static final Identifier PUBLIC_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_public.png");
 
     public final WWarning warning = new WWarning();
 

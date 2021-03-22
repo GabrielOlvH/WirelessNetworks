@@ -25,6 +25,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NetworkNodeScreen extends SyncedGuiDescription {
@@ -79,7 +80,9 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             }
         }
         panel.add(label, 0, 2);
-        WListPanel<String, WNetworkListEntry> list = new WConfigScreenListPanel(networks, WNetworkListEntry::new, (networkId, entry) -> {
+        UUID uuid = playerInventory.player.getUuid();
+        WListPanel<String, WNetworkListEntry> list = new WConfigScreenListPanel(networks, () -> new WNetworkListEntry(uuid, world), (networkId, entry) -> {
+            entry.setId(networkId);
             entry.setText(new LiteralText(Utils.getDisplayId(networkId)));
             entry.setClickAction(() -> {
                 label.setText(new LiteralText(Utils.getDisplayId(networkId)));
