@@ -69,7 +69,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WLabel title = new WLabel(new LiteralText("Network Node"), -1);
         panel.add(title, 0, 1);
 
-        WLabel label = new WLabel(new LiteralText("No network selected"), -1);
+        WLabel label = new WLabel(new LiteralText("Select a network"), -1);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         String[] selectedNetworkId = {null};
         if (blockEntity instanceof NetworkNodeBlockEntity) {
