@@ -6,6 +6,7 @@ import me.steven.wirelessnetworks.gui.NetworkConfigureScreenFactory;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
+import me.steven.wirelessnetworks.utils.Utils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -73,6 +74,14 @@ public class PacketHelper {
                 if (isCreating) {
                     if (optional.isPresent()) {
                         sendWarning("A network with this ID already exists", player);
+                        return;
+                    }
+                    if (Utils.getDisplayId(networkId).length() > 10) {
+                        sendWarning("Network ID can only have 10 characters at most.", player);
+                        return;
+                    }
+                    if (Utils.getDisplayId(networkId).trim().isEmpty()) {
+                        sendWarning("Network ID cannot be empty.", player);
                         return;
                     }
                     network = state.getOrCreateNetworkHandler(networkId, player.getUuid());

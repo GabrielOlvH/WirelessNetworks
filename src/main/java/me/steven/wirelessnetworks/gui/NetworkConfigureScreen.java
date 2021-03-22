@@ -45,6 +45,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             networkIdField = new WNoBGTextField();
             networkIdField.setSuggestion("Network ID");
             panel.add(networkIdField, 0, 0);
+            networkIdField.setMaxLength(10);
             networkIdField.setSize(80, 18);
         } else {
             WLabel label = new WLabel(Utils.getDisplayId(networkId), -1);
@@ -100,7 +101,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
             buf.writeBoolean(networkId == null);
-            buf.writeString(networkIdField != null ? Utils.sanitizeId(networkIdField.getText()) : networkId);
+            buf.writeString(networkIdField != null ? Utils.sanitizeId(networkIdField.getText().trim()) : networkId);
             buf.writeDouble(Double.parseDouble(energyCapacityField.getText()));
             buf.writeDouble(Double.parseDouble(maxInputField.getText()));
             buf.writeDouble(Double.parseDouble(maxOutputField.getText()));
