@@ -17,6 +17,7 @@ import me.steven.wirelessnetworks.utils.Utils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
@@ -24,6 +25,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NetworkNodeScreen extends SyncedGuiDescription {
 
@@ -37,7 +39,28 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
 
     public NetworkNodeScreen(BlockPos pos, List<String> networks, int syncId, PlayerInventory playerInventory) {
         super(WirelessNetworks.NODE_SCREEN_TYPE, syncId, playerInventory);
-        WGridPanel panel = new WGridPanel();
+
+        AtomicInteger confirm = new AtomicInteger();
+        WNoBGButton deleteNetwork = new WNoBGButton() {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                if (confirm.get() == 1) {
+                    tooltip.add(new LiteralText("Hold Shift + Click again to delete"));
+                } else {
+                    tooltip.add(new LiteralText("Delete network"));
+                }
+            }
+        };
+
+        WGridPanel panel = new WGridPanel() {
+            @Override
+            public void onMouseMove(int x, int y) {
+                super.onMouseMove(x, y);
+                if (!deleteNetwork.isWithinBounds(x, y)) {
+                    confirm.set(0);
+                }
+            }
+        };
         this.rootPanel = panel;
 
         panel.add(warning, 0, 0);
@@ -110,17 +133,16 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         configureButton.setSize(8, 8);
         configureButton.setIcon(EDIT_TEXTURE_ID);
 
-        WNoBGButton deleteNetwork = new WNoBGButton() {
-            @Override
-            public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Delete network"));
-            }
-        };
         deleteNetwork.setOnClick(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeString(selectedNetworkId[0]);
-            buf.writeBlockPos(pos);
-            ClientPlayNetworking.send(PacketHelper.DELETE_NETWORK, buf);
+            if (confirm.get() == 0) {
+                confirm.set(1);
+            } else if (confirm.get() == 1 && Screen.hasShiftDown()) {
+                PacketByteBuf buf = PacketByteBufs.create();
+                buf.writeString(selectedNetworkId[0]);
+                buf.writeBlockPos(pos);
+                ClientPlayNetworking.send(PacketHelper.DELETE_NETWORK, buf);
+                confirm.set(0);
+            }
         });
         panel.add(deleteNetwork, 3, 10);
         deleteNetwork.setLocation(3 * 18 + 9, 9 * 18 + 12);
