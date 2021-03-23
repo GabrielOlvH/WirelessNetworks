@@ -14,6 +14,8 @@ import me.steven.wirelessnetworks.gui.widgets.WNetworkListEntry;
 import me.steven.wirelessnetworks.gui.widgets.WNoBGButton;
 import me.steven.wirelessnetworks.gui.widgets.WWarning;
 import me.steven.wirelessnetworks.utils.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.entity.BlockEntity;
@@ -36,6 +38,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
     private static final Identifier DELETE_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_delete.png");
     private static final Identifier EDIT_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_edit.png");
 
+    @Environment(EnvType.CLIENT)
     public final WWarning warning = new WWarning();
 
     public NetworkNodeScreen(BlockPos pos, List<String> networks, int syncId, PlayerInventory playerInventory) {

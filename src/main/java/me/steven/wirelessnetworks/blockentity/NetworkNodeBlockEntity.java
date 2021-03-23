@@ -1,10 +1,10 @@
 package me.steven.wirelessnetworks.blockentity;
 
 import me.steven.wirelessnetworks.WirelessNetworks;
+import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -21,6 +21,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -60,9 +61,15 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        writeScreenOpeningData((ServerPlayerEntity) player, buf);
-        return WirelessNetworks.NODE_SCREEN_TYPE.create(syncId, inv, buf);
+
+        List<String> keys = NetworkState.getOrCreate(((ServerWorld) world).getServer())
+                .getNetworks()
+                .entrySet()
+                .stream()
+                .filter((entry) -> entry.getValue().canInteract(player))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return new NetworkNodeScreen(pos, keys, syncId, inv);
     }
 
     @Override

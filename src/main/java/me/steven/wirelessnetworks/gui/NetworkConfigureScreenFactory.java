@@ -1,8 +1,6 @@
 package me.steven.wirelessnetworks.gui;
 
-import me.steven.wirelessnetworks.WirelessNetworks;
 import me.steven.wirelessnetworks.network.Network;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -49,8 +47,13 @@ public class NetworkConfigureScreenFactory implements ExtendedScreenHandlerFacto
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity p) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        writeScreenOpeningData(player, buf);
-        return WirelessNetworks.CONFIGURE_SCREEN_TYPE.create(syncId, inv, buf);
+        if (network != null) {
+            return new NetworkConfigureScreen(blockPos, network.getId(), network.getOwner(), network.isProtected(), network.getEnergy(), network.getMaxInput(), network.getMaxOutput(), syncId, inv);
+        } else
+            return openCreateScreen(syncId, inv);
+    }
+
+    private NetworkConfigureScreen openCreateScreen(int syncId, PlayerInventory inv) {
+        return new NetworkConfigureScreen(blockPos, null, player.getUuid(), true, Network.DEFAULT_MAX_ENERGY, Network.DEFAULT_MAX_ENERGY, Network.DEFAULT_MAX_ENERGY, syncId, inv);
     }
 }

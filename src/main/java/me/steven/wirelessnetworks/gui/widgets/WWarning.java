@@ -3,6 +3,8 @@ package me.steven.wirelessnetworks.gui.widgets;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import me.steven.wirelessnetworks.mixin.HandledScreenAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,6 +20,7 @@ public class WWarning extends WWidget {
     public float bgWidth = 0;
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
         x = (((HandledScreenAccessor)currentScreen).getX()) + parent.getWidth() / 2;
@@ -39,6 +42,7 @@ public class WWarning extends WWidget {
 
     }
 
+    @Environment(EnvType.CLIENT)
     public void renderOrderedTooltip(MatrixStack matrices, int x, int y, int width, int height) {
         int i = width;
 
@@ -82,6 +86,7 @@ public class WWarning extends WWidget {
         matrices.pop();
     }
 
+    @Environment(EnvType.CLIENT)
     protected static void fillGradient(Matrix4f matrix, BufferBuilder bufferBuilder, int xStart, int yStart, int xEnd, int yEnd, int z, int colorStart, int colorEnd) {
         float f = (float)(colorStart >> 24 & 255) / 255.0F;
         float g = (float)(colorStart >> 16 & 255) / 255.0F;
