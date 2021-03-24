@@ -162,7 +162,13 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             warning.ticksRemaining = 400;
             return OptionalDouble.empty();
         }
-        return OptionalDouble.of(Double.parseDouble(text));
+        try {
+            return OptionalDouble.of(Double.parseDouble(text));
+        } catch (NumberFormatException e) {
+            warning.text = "Invalid " + title + "!";
+            warning.ticksRemaining = 400;
+            return OptionalDouble.empty();
+        }
     }
 
     @Override
