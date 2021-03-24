@@ -128,11 +128,13 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             }
         };
         configureButton.setOnClick(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeBlockPos(pos);
-            buf.writeBoolean(false);
-            buf.writeString(selectedNetworkId[0]);
-            ClientPlayNetworking.send(PacketHelper.OPEN_CONFIGURE_SCREEN, buf);
+            if (selectedNetworkId[0] != null) {
+                PacketByteBuf buf = PacketByteBufs.create();
+                buf.writeBlockPos(pos);
+                buf.writeBoolean(false);
+                buf.writeString(selectedNetworkId[0]);
+                ClientPlayNetworking.send(PacketHelper.OPEN_CONFIGURE_SCREEN, buf);
+            }
         });
         panel.add(configureButton, 4, 10);
         configureButton.setLocation(4 * 18 + 9, 9 * 18 + 12);
@@ -140,14 +142,17 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         configureButton.setIcon(EDIT_TEXTURE_ID);
 
         deleteNetwork.setOnClick(() -> {
-            if (confirm.get() == 0) {
-                confirm.set(1);
-            } else if (confirm.get() == 1 && Screen.hasShiftDown()) {
-                PacketByteBuf buf = PacketByteBufs.create();
-                buf.writeString(selectedNetworkId[0]);
-                buf.writeBlockPos(pos);
-                ClientPlayNetworking.send(PacketHelper.DELETE_NETWORK, buf);
-                confirm.set(0);
+            if (selectedNetworkId[0] != null) {
+                if (confirm.get() == 0) {
+                    confirm.set(1);
+                } else if (confirm.get() == 1 && Screen.hasShiftDown()) {
+                    PacketByteBuf buf = PacketByteBufs.create();
+                    buf.writeString(selectedNetworkId[0]);
+                    buf.writeBlockPos(pos);
+                    ClientPlayNetworking.send(PacketHelper.DELETE_NETWORK, buf);
+                    selectedNetworkId[0] = null;
+                    confirm.set(0);
+                }
             }
         });
         panel.add(deleteNetwork, 3, 10);

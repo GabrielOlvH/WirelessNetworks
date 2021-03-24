@@ -32,39 +32,35 @@ public class WWarning extends WWidget {
         } else if (bgWidth < width) {
             bgWidth += width * 0.065;
             bgWidth = Math.min(width, bgWidth);
+        } else if (bgWidth > width) {
+            bgWidth -= width * 0.065;
+            bgWidth = Math.max(width, bgWidth);
         } else {
             ticksRemaining--;
         }
 
         if (bgWidth > 0) {
-            renderOrderedTooltip(matrices, x - (int)bgWidth / 2, y, (int)bgWidth, textRenderer.fontHeight);
+            renderTooltipBackground(matrices, x - (int)bgWidth / 2, y, (int)bgWidth, textRenderer.fontHeight);
         }
 
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderOrderedTooltip(MatrixStack matrices, int x, int y, int width, int height) {
-        int i = width;
-
-        int k = x;
-        int l = y;
-        int n = height;
-
-
+    public void renderTooltipBackground(MatrixStack matrices, int x, int y, int width, int height) {
         matrices.push();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(7, VertexFormats.POSITION_COLOR);
         Matrix4f matrix4f = matrices.peek().getModel();
-        fillGradient(matrix4f, bufferBuilder, k - 3, l - 4, k + i + 3, l - 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, k - 3, l + n + 3, k + i + 3, l + n + 4, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, k - 3, l - 3, k + i + 3, l + n + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, k - 4, l - 3, k - 3, l + n + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, k + i + 3, l - 3, k + i + 4, l + n + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, k - 3, l - 3 + 1, k - 3 + 1, l + n + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, k + i + 2, l - 3 + 1, k + i + 3, l + n + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, k - 3, l - 3, k + i + 3, l - 3 + 1, 400, 1347420415, 1347420415);
-        fillGradient(matrix4f, bufferBuilder, k - 3, l + n + 2, k + i + 3, l + n + 3, 400, 1344798847, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y - 4, x + width + 3, y - 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y + height + 3, x + width + 3, y + height + 4, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y - 3, x + width + 3, y + height + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, x - 4, y - 3, x - 3, y + height + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, x + width + 3, y - 3, x + width + 4, y + height + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y - 3 + 1, x - 3 + 1, y + height + 3 - 1, 400, 1347420415, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, x + width + 2, y - 3 + 1, x + width + 3, y + height + 3 - 1, 400, 1347420415, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y - 3, x + width + 3, y - 3 + 1, 400, 1347420415, 1347420415);
+        fillGradient(matrix4f, bufferBuilder, x - 3, y + height + 2, x + width + 3, y + height + 3, 400, 1344798847, 1344798847);
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
