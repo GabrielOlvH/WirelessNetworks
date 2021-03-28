@@ -14,6 +14,7 @@ import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -28,10 +29,10 @@ public class WirelessNetworks implements ModInitializer {
 	public static final String MOD_ID = "wirelessnetworks";
 
 	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).nonOpaque());
-	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings());
+	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings().group(ItemGroup.SEARCH));
 	public static final BlockEntityType<NetworkNodeBlockEntity> NODE_BLOCK_ENTITY_TYPE
 			= BlockEntityType.Builder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
-	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings());
+	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings().group(ItemGroup.SEARCH));
 
 	public static final ExtendedScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkNodeScreen>)
 			ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "node_screen"), (syncId, inventory, buf) -> {
