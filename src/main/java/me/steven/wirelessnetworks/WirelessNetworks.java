@@ -8,6 +8,7 @@ import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -28,7 +29,7 @@ public class WirelessNetworks implements ModInitializer {
 
 	public static final String MOD_ID = "wirelessnetworks";
 
-	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).nonOpaque());
+	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).strength(2f).breakByTool(FabricToolTags.PICKAXES, 2).nonOpaque());
 	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings().group(ItemGroup.SEARCH));
 	public static final BlockEntityType<NetworkNodeBlockEntity> NODE_BLOCK_ENTITY_TYPE
 			= BlockEntityType.Builder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
