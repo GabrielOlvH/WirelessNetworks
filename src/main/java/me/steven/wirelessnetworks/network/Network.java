@@ -41,7 +41,7 @@ public class Network implements EnergyIo {
 
     @Override
     public double getEnergy() {
-        return energy;
+        return Math.min(energy, energyCapacity);
     }
 
     @Override
@@ -51,6 +51,7 @@ public class Network implements EnergyIo {
 
     public void setEnergyCapacity(double energyCapacity) {
         this.energyCapacity = energyCapacity;
+        this.energy = Math.min(energy, energyCapacity);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class Network implements EnergyIo {
 
     @Override
     public double insert(double amount, Simulation simulation) {
-        double inserted = Math.min(Math.min(amount, maxInput), energyCapacity - energy);
+        double inserted = Math.min(Math.min(amount, maxInput), energyCapacity - getEnergy());
         if (simulation.isActing()) this.energy += amount;
         return amount - inserted;
     }
@@ -80,7 +81,7 @@ public class Network implements EnergyIo {
 
     @Override
     public double extract(double maxAmount, Simulation simulation) {
-        double extracted = Math.min(Math.min(maxAmount, maxOutput), energy);
+        double extracted = Math.min(Math.min(maxAmount, maxOutput), getEnergy());
         if (simulation.isActing()) this.energy -= extracted;
         return extracted;
     }
