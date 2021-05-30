@@ -26,6 +26,6 @@ public class WNoBGButton extends WButton {
 
     public void setIcon(Identifier identifier) {
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-            this.setIcon((f, u, c, k) -> ScreenDrawing.texturedRect(u, c, width, height, identifier, -1));
+            this.setIcon((f, u, c, k) -> ScreenDrawing.texturedRect(f, u, c, width, height, identifier, -1));
     }
 }

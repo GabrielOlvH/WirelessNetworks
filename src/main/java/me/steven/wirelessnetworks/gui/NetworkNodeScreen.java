@@ -6,6 +6,7 @@ import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.WListPanel;
+import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import me.steven.wirelessnetworks.PacketHelper;
 import me.steven.wirelessnetworks.WirelessNetworks;
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
@@ -58,11 +59,13 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
 
         WGridPanel panel = new WGridPanel() {
             @Override
-            public void onMouseMove(int x, int y) {
+            public InputResult onMouseMove(int x, int y) {
                 super.onMouseMove(x, y);
                 if (!deleteNetwork.isWithinBounds(x, y)) {
                     confirm.set(0);
+                    return InputResult.PROCESSED;
                 }
+                return InputResult.IGNORED;
             }
         };
         this.rootPanel = panel;
@@ -166,7 +169,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
     @Override
     public void addPainters() {
         super.addPainters();
-        this.rootPanel.setBackgroundPainter((x, y, panel) ->
-                ScreenDrawing.texturedRect(x-8, y-8 + 18, 108 + 16, 164 + 16, TEXTURE_ID, -1));
+        this.rootPanel.setBackgroundPainter((matrices, x, y, panel) ->
+                ScreenDrawing.texturedRect(matrices, x-8, y-8 + 18, 108 + 16, 164 + 16, TEXTURE_ID, -1));
     }
 }

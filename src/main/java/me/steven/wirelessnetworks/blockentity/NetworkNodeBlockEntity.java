@@ -10,7 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -19,6 +19,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,8 +32,8 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
 
     private String networkId = null;
 
-    public NetworkNodeBlockEntity() {
-        super(WirelessNetworks.NODE_BLOCK_ENTITY_TYPE);
+    public NetworkNodeBlockEntity(BlockPos pos, BlockState state) {
+        super(WirelessNetworks.NODE_BLOCK_ENTITY_TYPE, pos, state);
     }
 
     public String getNetworkId() {
@@ -87,27 +88,27 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         if (networkId != null)
             tag.putString("NetworkID", networkId);
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         if (tag.contains("NetworkID"))
             networkId = tag.getString("NetworkID");
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
+    public void fromClientTag(NbtCompound tag) {
         if (tag.contains("NetworkID"))
             networkId = tag.getString("NetworkID");
     }
 
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
+    public NbtCompound toClientTag(NbtCompound tag) {
         if (networkId != null)
             tag.putString("NetworkID", networkId);
         return tag;

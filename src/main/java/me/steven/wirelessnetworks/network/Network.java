@@ -3,7 +3,7 @@ package me.steven.wirelessnetworks.network;
 import dev.technici4n.fasttransferlib.api.Simulation;
 import dev.technici4n.fasttransferlib.api.energy.EnergyIo;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 
 import java.util.UUID;
@@ -123,11 +123,11 @@ public class Network implements EnergyIo {
     }
 
     public boolean canInteract(PlayerEntity player) {
-        return player.abilities.creativeMode || !isProtected || owner.equals(player.getUuid());
+        return player.getAbilities().creativeMode || !isProtected || owner.equals(player.getUuid());
     }
 
     public boolean canModify(PlayerEntity player) {
-        return player.abilities.creativeMode || owner.equals(player.getUuid());
+        return player.getAbilities().creativeMode || owner.equals(player.getUuid());
     }
 
     public void writeScreenData(PacketByteBuf buf) {
@@ -139,8 +139,8 @@ public class Network implements EnergyIo {
         buf.writeUuid(owner);
     }
 
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public NbtCompound toTag() {
+        NbtCompound tag = new NbtCompound();
         tag.putDouble("energy", energy);
         tag.putDouble("energyCapacity", energyCapacity);
         tag.putString("id", id);
@@ -151,7 +151,7 @@ public class Network implements EnergyIo {
         return tag;
     }
 
-    public static Network fromTag(CompoundTag tag) {
+    public static Network fromTag(NbtCompound tag) {
         double energy = tag.getDouble("energy");
         double energyCapacity = tag.getDouble("energyCapacity");
         String id = tag.getString("id");

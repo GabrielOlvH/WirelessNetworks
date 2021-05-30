@@ -5,6 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import me.steven.wirelessnetworks.WirelessNetworks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -76,7 +77,7 @@ public class WNetworkListEntry extends WWidget {
 
     @Override
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (isSelected.get()) ScreenDrawing.coloredRect(x, y, width, height, 0x22000099);
+        if (isSelected.get()) ScreenDrawing.coloredRect(matrices, x, y, width, height, 0x22000099);
         ScreenDrawing.drawStringWithShadow(matrices, text.asOrderedText(),
                 HorizontalAlignment.LEFT, x, y + ((height - 8) / 2),
                 width, WLabel.DEFAULT_DARKMODE_TEXT_COLOR);
@@ -84,7 +85,7 @@ public class WNetworkListEntry extends WWidget {
 
         int index = getId().indexOf(":");
         if (index > 0) {
-            ScreenDrawing.texturedRect(x + width - 8, y, 8, 8, PRIVATE_TEXTURE_ID, -1);
+            ScreenDrawing.texturedRect(matrices, x + width - 8, y, 8, 8, PRIVATE_TEXTURE_ID, -1);
         }
     }
 
@@ -115,8 +116,9 @@ public class WNetworkListEntry extends WWidget {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void onClick(int x, int y, int button) {
+    public InputResult onClick(int x, int y, int button) {
         clickAction.run();
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        return InputResult.PROCESSED;
     }
 }

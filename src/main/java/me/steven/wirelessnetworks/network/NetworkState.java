@@ -1,8 +1,8 @@
 package me.steven.wirelessnetworks.network;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 
@@ -18,7 +18,7 @@ public class NetworkState extends PersistentState {
     private final Map<String, Network> networks = new HashMap<>();
 
     public NetworkState() {
-        super(KEY);
+        super();
     }
 
     public Optional<Network> getNetworkHandler(String id) {
@@ -42,24 +42,25 @@ public class NetworkState extends PersistentState {
         return ImmutableMap.copyOf(networks);
     }
 
-    @Override
-    public void fromTag(CompoundTag tag) {
-        ListTag list = tag.getList("Networks", 10);
+    public static NetworkState fromNbt(NbtCompound tag) {
+        NetworkState state = new NetworkState();
+        NbtList list = tag.getList("Networks", 10);
         list.forEach(networkTag -> {
-            Network network = Network.fromTag((CompoundTag) networkTag);
-            networks.put(network.getId(), network);
+            Network network = Network.fromTag((NbtCompound) networkTag);
+            state.networks.put(network.getId(), network);
         });
+        return state;
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        ListTag list = new ListTag();
+    public NbtCompound writeNbt(NbtCompound tag) {
+        NbtList list = new NbtList();
         networks.forEach((id, network) -> list.add(network.toTag()));
         tag.put("Networks", list);
         return tag;
     }
 
     public static NetworkState getOrCreate(MinecraftServer server) {
-        return server.getOverworld().getPersistentStateManager().getOrCreate(NetworkState::new, KEY);
+        return server.getOverworld().getPersistentStateManager().getOrCreate(NetworkState::fromNbt, NetworkState::new, KEY);
     }
 }

@@ -22,9 +22,9 @@ public class WConfigScreenScrollbar extends WScrollBar {
         if (maxValue <= 0) return;
 
         if (axis == Axis.HORIZONTAL) {
-            ScreenDrawing.drawBeveledPanel(x + 1 + getHandlePosition(), y + 1, getHandleSize(), height - 2, TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
+            ScreenDrawing.drawBeveledPanel(matrices, x + 1 + getHandlePosition(), y + 1, getHandleSize(), height - 2, TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
         } else {
-            ScreenDrawing.drawBeveledPanel(x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
+            ScreenDrawing.drawBeveledPanel(matrices, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
         }
     }
 }

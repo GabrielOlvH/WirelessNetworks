@@ -7,6 +7,7 @@ import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
@@ -32,7 +33,7 @@ public class WirelessNetworks implements ModInitializer {
 	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).strength(2f).breakByTool(FabricToolTags.PICKAXES, 2).nonOpaque());
 	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings().group(ItemGroup.SEARCH));
 	public static final BlockEntityType<NetworkNodeBlockEntity> NODE_BLOCK_ENTITY_TYPE
-			= BlockEntityType.Builder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
+			= FabricBlockEntityTypeBuilder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
 	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings().group(ItemGroup.SEARCH));
 
 	public static final ExtendedScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkNodeScreen>)

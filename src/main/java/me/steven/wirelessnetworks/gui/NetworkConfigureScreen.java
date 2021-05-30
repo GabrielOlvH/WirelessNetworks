@@ -174,7 +174,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
     @Override
     public void addPainters() {
         super.addPainters();
-        this.rootPanel.setBackgroundPainter((x, y, panel) ->
-                ScreenDrawing.texturedRect(x-8, y, 90 + 16, 92 + 8, TEXTURE_ID, -1));
+        this.rootPanel.setBackgroundPainter((matrices, x, y, panel) ->
+                ScreenDrawing.texturedRect(matrices, x-8, y, 90 + 16, 92 + 8, TEXTURE_ID, -1));
     }
 }
