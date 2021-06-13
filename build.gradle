@@ -30,6 +30,7 @@ repositories {
 			includeGroup "me.shedaniel"
 			includeGroup "me.shedaniel.cloth"
 			includeGroup "me.shedaniel.cloth.api"
+			includeGroup "dev.architectury"
 		}
 	}
 	maven {
@@ -51,22 +52,26 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modApi ("dev.technici4n:FastTransferLib:${project.ftl_version}")
-	include ("dev.technici4n:FastTransferLib:${project.ftl_version}")
+	modApi("dev.technici4n:FastTransferLib:${project.ftl_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-rendering-v1"
+	}
+	include("dev.technici4n:FastTransferLib:${project.ftl_version}") {
+		exclude group: "net.fabricmc.fabric-api", module: "fabric-rendering-v1"
+	}
 
 	modImplementation("io.github.cottonmc:LibGui:${project.libgui_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+		exclude group: "net.fabricmc.fabric-api"
 	}
 	include("io.github.cottonmc:LibGui:${project.libgui_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+		exclude group: "net.fabricmc.fabric-api"
 	}
 
 	modRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+	modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+		exclude group: "net.fabricmc.fabric-api"
 	}
 
 
