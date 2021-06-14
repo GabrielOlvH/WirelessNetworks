@@ -1,5 +1,7 @@
 package me.steven.wirelessnetworks.gui.widgets;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.WTextField;
 import me.steven.wirelessnetworks.mixin.WTextFieldAccessor;
@@ -7,7 +9,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
 
 public class WNoBGTextField extends WTextField {
 
@@ -73,6 +77,22 @@ public class WNoBGTextField extends WTextField {
 
     @Environment(EnvType.CLIENT)
     private void invertedRect(MatrixStack matrices, int x, int y, int width, int height) {
-        ((WTextFieldAccessor) this).invertedRect(matrices, x, y, width, height);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        Matrix4f model = matrices.peek().getModel();
+        RenderSystem.setShaderColor(0.0F, 0.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.disableTexture();
+        RenderSystem.enableColorLogicOp();
+        RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+        buffer.vertex(model, x,       y+height, 0).next();
+        buffer.vertex(model, x+width, y+height, 0).next();
+        buffer.vertex(model, x+width, y,        0).next();
+        buffer.vertex(model, x,       y,        0).next();
+        buffer.end();
+        BufferRenderer.draw(buffer);
+        RenderSystem.disableColorLogicOp();
+        RenderSystem.enableTexture();
     }
 }
