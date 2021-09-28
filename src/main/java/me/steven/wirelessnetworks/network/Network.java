@@ -1,6 +1,8 @@
 package me.steven.wirelessnetworks.network;
 
+import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -8,7 +10,8 @@ import team.reborn.energy.api.EnergyStorage;
 
 import java.util.UUID;
 
-public class Network implements EnergyStorage {
+@SuppressWarnings("UnstableApiUsage")
+public class Network extends SnapshotParticipant<Long> implements EnergyStorage {
 
     public static final long DEFAULT_MAX_ENERGY = 1_000_000;
 
@@ -40,7 +43,7 @@ public class Network implements EnergyStorage {
     }
 
     @Override
-    public long getAmount() { return Math.min(energy, energyCapacity); }
+    public long getAmount() { return energy; }
 
     @Override
     public long getCapacity() { return energyCapacity; }
@@ -51,15 +54,19 @@ public class Network implements EnergyStorage {
     }
 
     @Override
-    public boolean supportsInsertion() {
-        return true;
-    }
+    public boolean supportsInsertion() { return this.maxInput > 0L; }
 
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
-        long inserted = Math.min(Math.min(maxAmount, maxInput), energyCapacity - getAmount());
-        this.energy += maxAmount;
-        return maxAmount - inserted;
+        StoragePreconditions.notNegative(maxAmount);
+        long inserted = Math.min(this.maxInput, Math.min(maxAmount, this.energyCapacity - this.energy));
+        if (inserted > 0L) {
+            this.updateSnapshots(transaction);
+            this.energy += inserted;
+            return inserted;
+        } else {
+            return 0L;
+        }
     }
 
     public long getMaxInput() {
@@ -71,15 +78,19 @@ public class Network implements EnergyStorage {
     }
 
     @Override
-    public boolean supportsExtraction() {
-        return true;
-    }
+    public boolean supportsExtraction() { return this.maxOutput > 0L; }
 
     @Override
     public long extract(long maxAmount, TransactionContext transaction) {
-        long extracted = Math.min(Math.min(maxAmount, maxOutput), getAmount());
-        this.energy -= extracted;
-        return extracted;
+        StoragePreconditions.notNegative(maxAmount);
+        long extracted = Math.min(this.maxOutput, Math.min(maxAmount, this.energy));
+        if (extracted > 0L) {
+            this.updateSnapshots(transaction);
+            this.energy -= extracted;
+            return extracted;
+        } else {
+            return 0L;
+        }
     }
 
     public long getMaxOutput() {
@@ -108,6 +119,16 @@ public class Network implements EnergyStorage {
             this.id = id.substring(owner.toString().length() + 1);
             state.put(id, this);
         }
+    }
+
+    @Override
+    protected Long createSnapshot() {
+        return this.energy;
+    }
+
+    @Override
+    protected void readSnapshot(Long snapshot) {
+        this.energy = snapshot;
     }
 
     public boolean isProtected() {
@@ -157,4 +178,5 @@ public class Network implements EnergyStorage {
         UUID playerUuid = tag.getUuid("owner");
         return new Network(id, isProtected, playerUuid, energy, energyCapacity, maxInput, maxOutput);
     }
+
 }
