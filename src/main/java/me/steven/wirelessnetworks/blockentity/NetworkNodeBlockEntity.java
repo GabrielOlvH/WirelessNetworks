@@ -16,8 +16,8 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -50,14 +50,10 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public Text getName() {
-        return new LiteralText("Network Node");
-    }
+    public Text getName() { return new TranslatableText("block.wirelessnetworks.node_block"); }
 
     @Override
-    public Text getDisplayName() {
-        return new LiteralText("Network Node");
-    }
+    public Text getDisplayName() { return new TranslatableText("block.wirelessnetworks.node_block"); }
 
     @Nullable
     @Override

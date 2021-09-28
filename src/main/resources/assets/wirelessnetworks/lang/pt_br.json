@@ -1,0 +1,28 @@
+{
+  "block.wirelessnetworks.node_block": "Roteador de Rede",
+  "item.wirelessnetworks.entangled_capacitor": "Capacitor de Rede",
+
+
+  "gui.wirelessnetworks.network.select": "Selecione uma Rede",
+  "gui.wirelessnetworks.network.create": "Criar Rede",
+  "gui.wirelessnetworks.network.edit": "Editar Rede",
+
+  "gui.wirelessnetworks.network.save": "Salvar",
+
+  "gui.wirelessnetworks.network.public": "Tornar rede pública",
+  "gui.wirelessnetworks.network.private": "Tornar rede privada",
+
+  "gui.wirelessnetworks.network.owned": "Você possui esta rede.",
+  "gui.wirelessnetworks.network.ownedby": "Esta rede é propriedade de %s",
+
+  "gui.wirelessnetworks.network.delete": "Deletar Rede",
+  "gui.wirelessnetworks.network.delete.confirm" : "Segure Shift e clique novamente para deletar",
+
+
+  "gui.wirelessnetworks.network.send": "Máximo de energia que a rede pode mandar por tick.",
+  "gui.wirelessnetworks.network.receive": "Máximo de energia que a rede pode receber por tick.",
+  "gui.wirelessnetworks.network.store": "Máximo de energia que a rede pode armazenar.",
+
+  "gui.wirelessnetworks.network.suggestion": "ID da rede..."
+
+}
