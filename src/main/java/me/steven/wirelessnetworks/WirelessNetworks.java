@@ -1,6 +1,5 @@
 package me.steven.wirelessnetworks;
 
-import dev.technici4n.fasttransferlib.api.energy.EnergyApi;
 import me.steven.wirelessnetworks.block.NetworkBlock;
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
@@ -21,6 +20,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+import team.reborn.energy.api.EnergyStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +52,9 @@ public class WirelessNetworks implements ModInitializer {
 				BlockPos pos = buf.readBlockPos();
 				boolean isNewNetwork = buf.readBoolean();
 				String networkId = isNewNetwork ? null : buf.readString(32767);
-				double energyCapacity = buf.readDouble();
-				double maxInput = buf.readDouble();
-				double maxOutput = buf.readDouble();
+				long energyCapacity = buf.readLong();
+				long maxInput = buf.readLong();
+				long maxOutput = buf.readLong();
 				boolean isProtected = buf.readBoolean();
 				UUID owner = buf.readUuid();
 				return new NetworkConfigureScreen(pos, networkId, owner, isProtected, energyCapacity, maxInput, maxOutput, syncId, inventory);
@@ -67,7 +67,7 @@ public class WirelessNetworks implements ModInitializer {
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "node_block"), NODE_BLOCK_ENTITY_TYPE);
 		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "entangled_capacitor"), ENTANGLED_CAPACITOR_ITEM);
 
-		EnergyApi.SIDED.registerForBlockEntities((blockEntity, direction) -> {
+		EnergyStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> {
 			if (
 					blockEntity instanceof NetworkNodeBlockEntity
 							&& blockEntity.getWorld() != null

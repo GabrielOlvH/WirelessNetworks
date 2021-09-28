@@ -32,9 +32,9 @@ public class NetworkConfigureScreenFactory implements ExtendedScreenHandlerFacto
         if (network != null)
             network.writeScreenData(buf);
         else {
-            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
-            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
-            buf.writeDouble(Network.DEFAULT_MAX_ENERGY);
+            buf.writeLong(Network.DEFAULT_MAX_ENERGY);
+            buf.writeLong(Network.DEFAULT_MAX_ENERGY);
+            buf.writeLong(Network.DEFAULT_MAX_ENERGY);
             buf.writeBoolean(true);
             buf.writeUuid(player.getUuid());
         }
@@ -48,7 +48,7 @@ public class NetworkConfigureScreenFactory implements ExtendedScreenHandlerFacto
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity p) {
         if (network != null) {
-            return new NetworkConfigureScreen(blockPos, network.getId(), network.getOwner(), network.isProtected(), network.getEnergy(), network.getMaxInput(), network.getMaxOutput(), syncId, inv);
+            return new NetworkConfigureScreen(blockPos, network.getId(), network.getOwner(), network.isProtected(), network.getAmount(), network.getMaxInput(), network.getMaxOutput(), syncId, inv);
         } else
             return openCreateScreen(syncId, inv);
     }

@@ -20,11 +20,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.OptionalDouble;
+import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class NetworkConfigureScreen extends SyncedGuiDescription {
+public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-hardcode all LiteralText into TranslatableText
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
 
@@ -37,7 +37,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
 
     private WTextField networkIdField = null;
 
-    public NetworkConfigureScreen(BlockPos pos, @Nullable String networkId, UUID owner, boolean isProtected, double energyCapacity, double maxInput, double maxOutput, int syncId, PlayerInventory playerInventory) {
+    public NetworkConfigureScreen(BlockPos pos, @Nullable String networkId, UUID owner, boolean isProtected, long energyCapacity, long maxInput, long maxOutput, int syncId, PlayerInventory playerInventory) {
         super(WirelessNetworks.CONFIGURE_SCREEN_TYPE, syncId, playerInventory);
         WGridPanel panel = new WGridPanel();
         this.rootPanel = panel;
@@ -130,17 +130,17 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         };
         save.setLabel(new LiteralText("Save"));
         save.setOnClick(() -> {
-            OptionalDouble capacity = validate(energyCapacityField, "energy capacity");
-            OptionalDouble input = validate(maxInputField, "maximum input");
-            OptionalDouble output = validate(maxOutputField, "maximum output");
+            OptionalLong capacity = validate(energyCapacityField, "energy capacity");
+            OptionalLong input = validate(maxInputField, "maximum input");
+            OptionalLong output = validate(maxOutputField, "maximum output");
             if (!capacity.isPresent() || !input.isPresent() || !output.isPresent()) return;
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
             buf.writeBoolean(networkId == null);
             buf.writeString(networkIdField != null ? Utils.sanitizeId(networkIdField.getText().trim()) : networkId);
-            buf.writeDouble(capacity.getAsDouble());
-            buf.writeDouble(input.getAsDouble());
-            buf.writeDouble(output.getAsDouble());
+            buf.writeLong(capacity.getAsLong());
+            buf.writeLong(input.getAsLong());
+            buf.writeLong(output.getAsLong());
             buf.writeBoolean(isProtectedToggle.getToggle());
             ClientPlayNetworking.send(PacketHelper.UPDATE_NETWORK, buf);
         });
@@ -155,19 +155,19 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             networkIdField.requestFocus();
     }
 
-    private OptionalDouble validate(WTextField field, String title) {
+    private OptionalLong validate(WTextField field, String title) {
         String text = field.getText();
         if (!NUMBER_PATTERN.matcher(text).matches()) {
             warning.text = "Invalid " + title + "! Only numbers are allowed.";
             warning.ticksRemaining = 400;
-            return OptionalDouble.empty();
+            return OptionalLong.empty();
         }
         try {
-            return OptionalDouble.of(Double.parseDouble(text));
+            return OptionalLong.of(Long.parseLong(text));
         } catch (NumberFormatException e) {
             warning.text = "Invalid " + title + "!";
             warning.ticksRemaining = 400;
-            return OptionalDouble.empty();
+            return OptionalLong.empty();
         }
     }
 

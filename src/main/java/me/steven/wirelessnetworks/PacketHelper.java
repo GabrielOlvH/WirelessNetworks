@@ -59,9 +59,9 @@ public class PacketHelper {
             BlockPos pos = buf.readBlockPos();
             boolean isCreating = buf.readBoolean();
             String networkId = buf.readString(32767);
-            double capacity = buf.readDouble();
-            double maxInput = buf.readDouble();
-            double maxOutput = buf.readDouble();
+            long capacity = buf.readLong();
+            long maxInput = buf.readLong();
+            long maxOutput = buf.readLong();
             boolean isProtected = buf.readBoolean();
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
