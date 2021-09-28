@@ -98,6 +98,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
                 buf.writeString(networkId);
                 selectedNetworkId[0] = networkId;
                 ClientPlayNetworking.send(PacketHelper.SELECT_NETWORK, buf);
+
             });
             entry.setIsSelected(() -> networkId.equals(selectedNetworkId[0]));
             entry.setSize(73, 15);

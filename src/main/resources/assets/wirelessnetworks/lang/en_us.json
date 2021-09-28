@@ -12,6 +12,9 @@
   "gui.wirelessnetworks.network.public": "Make network public",
   "gui.wirelessnetworks.network.private": "Make network private",
 
+  "gui.wirelessnetworks.network.owned": "You own this network",
+  "gui.wirelessnetworks.network.ownedby": "This network is owned by %s",
+
   "gui.wirelessnetworks.network.delete": "Delete Network",
   "gui.wirelessnetworks.network.delete.confirm" : "Hold Shift + Click again to delete",
 

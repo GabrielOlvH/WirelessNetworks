@@ -14,8 +14,8 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -101,15 +101,14 @@ public class WNetworkListEntry extends WWidget {
     }
 
     @Override
-    public void addTooltip(TooltipBuilder tooltip) {
+    public void addTooltip(TooltipBuilder tooltip) { //TODO: add energy info to tooltip.
         getOwnerUuid().ifPresent((s) -> {
             if (s.equals(owner.toString())) {
-                tooltip.add(new LiteralText("You own this network"));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.owned"));
             } else {
                 PlayerEntity player = world.getPlayerByUuid(UUID.fromString(s));
                 String string = player != null ? player.getDisplayName().asString() : s;
-                tooltip.add(new LiteralText("This network is owned by "));
-                tooltip.add(new LiteralText((string)));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.ownedby", string));
             }
         });
     }
