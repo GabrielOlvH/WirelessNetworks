@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,7 @@ import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-hardcode all LiteralText into TranslatableText
+public class NetworkConfigureScreen extends SyncedGuiDescription {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
 
@@ -47,7 +47,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
 
         if (networkId == null) {
             networkIdField = new WNoBGTextField();
-            networkIdField.setSuggestion("Network ID...");
+            networkIdField.setSuggestion(new TranslatableText("gui.wirelessnetworks.network.suggestion"));
             panel.add(networkIdField, 0, 0);
             networkIdField.setMaxLength(10);
             networkIdField.setSize(80, 18);
@@ -60,7 +60,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
         WWidget energyCapacityTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Energy limit this network can store."));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.store"));
             }
         };
         panel.add(energyCapacityTooltip, 1, 3);
@@ -76,7 +76,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
         WWidget maxInputTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Energy limit this network can receive per tick."));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.receive"));
             }
         };
         panel.add(maxInputTooltip, 1, 1);
@@ -93,7 +93,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
         WWidget maxOutputTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Energy limit this network can send per tick."));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.send"));
             }
         };
         panel.add(maxOutputTooltip, 1, 2);
@@ -110,9 +110,9 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
                 if (getToggle())
-                    tooltip.add(new LiteralText("Make network public"));
+                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.public"));
                 else
-                    tooltip.add(new LiteralText("Make network private"));
+                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.private"));
             }
         };
         isProtectedToggle.setToggle(isProtected);
@@ -125,10 +125,10 @@ public class NetworkConfigureScreen extends SyncedGuiDescription { //TODO: Un-ha
         WNoBGButton save = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Save"));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.save"));
             }
         };
-        save.setLabel(new LiteralText("Save"));
+        save.setLabel(new TranslatableText("gui.wirelessnetworks.network.save"));
         save.setOnClick(() -> {
             OptionalLong capacity = validate(energyCapacityField, "energy capacity");
             OptionalLong input = validate(maxInputField, "maximum input");
