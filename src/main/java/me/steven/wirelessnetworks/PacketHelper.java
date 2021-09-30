@@ -14,6 +14,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -42,7 +43,7 @@ public class PacketHelper {
                 else {
                     Optional<Network> optional = NetworkState.getOrCreate(server).getNetworkHandler(networkId);
                     if (!optional.isPresent()) {
-                        sendWarning("This network no longer exists", player);
+                        sendWarning("warning.wirelessnetworks.network.doesnt.exist", player);
                         return;
                     }
                     network = optional.get();
@@ -50,7 +51,7 @@ public class PacketHelper {
                 if (network == null || network.canModify(player))
                     player.openHandledScreen(new NetworkConfigureScreenFactory(blockPos, network, player));
                 else
-                    sendWarning("You cannot modify networks you do not own.", player);
+                    sendWarning("warning.wirelessnetworks.network.modify.dont.own", player);
 
             });
         });
@@ -66,34 +67,34 @@ public class PacketHelper {
             server.execute(() -> {
                 NetworkState state = NetworkState.getOrCreate(server);
                 if (networkId.isEmpty()) {
-                    sendWarning("Network ID cannot be empty.", player);
+                    sendWarning("warning.wirelessnetworks.network.id.empty", player);
                     return;
                 }
                 Network network;
                 Optional<Network> optional = state.getNetworkHandler(networkId);
                 if (isCreating) {
                     if (optional.isPresent()) {
-                        sendWarning("A network with this ID already exists", player);
+                        sendWarning("warning.wirelessnetworks.network.doesnt.exist", player);
                         return;
                     }
                     if (Utils.getDisplayId(networkId).length() > 10) {
-                        sendWarning("Network ID can only have 10 characters at most.", player);
+                        sendWarning("warning.wirelessnetworks.network.id.characters", player);
                         return;
                     }
                     if (Utils.getDisplayId(networkId).trim().isEmpty()) {
-                        sendWarning("Network ID cannot be empty.", player);
+                        sendWarning("warning.wirelessnetworks.network.id.empty", player);
                         return;
                     }
                     network = state.getOrCreateNetworkHandler(networkId, player.getUuid());
                 } else {
                     if (!optional.isPresent()) {
-                        sendWarning("This network no longer exists", player);
+                        sendWarning("warning.wirelessnetworks.network.doesnt.exist", player);
                         return;
                     }
                     network = optional.get();
                 }
                 if (!network.canModify(player)) {
-                    sendWarning("You cannot modify networks you do not own.", player);
+                    sendWarning("warning.wirelessnetworks.network.modify.dont.own", player);
                     return;
                 }
                 network.setEnergyCapacity(capacity);
@@ -118,10 +119,10 @@ public class PacketHelper {
                 NetworkState state = NetworkState.getOrCreate(server);
                 Optional<Network> optional = state.getNetworkHandler(networkId);
                 if (!optional.isPresent()) {
-                    sendWarning("This network no longer exists", player);
+                    sendWarning("warning.wirelessnetworks.network.doesnt.exist", player);
                     return;
                 } else if (!optional.get().canInteract(player)) {
-                    sendWarning("You cannot use this network. This should not have happened", player);
+                    sendWarning("warning.wirelessnetworks.network.misc", player);
                     return;
                 }
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
@@ -140,10 +141,10 @@ public class PacketHelper {
                 NetworkState state = NetworkState.getOrCreate(server);
                 Optional<Network> optional = state.getNetworkHandler(networkId);
                 if (!optional.isPresent()) {
-                    sendWarning("This network no longer exists", player);
+                    sendWarning("warning.wirelessnetworks.network.doesnt.exist", player);
                     return;
                 } else if (!optional.get().canModify(player)) {
-                    sendWarning("You cannot modify networks you do not own.", player);
+                    sendWarning("warning.wirelessnetworks.network.modify.dont.own", player);
                     return;
                 }
                 state.delete(networkId);
@@ -162,10 +163,10 @@ public class PacketHelper {
             client.execute(() -> {
                 ScreenHandler currentScreenHandler = client.player.currentScreenHandler;
                 if (currentScreenHandler instanceof NetworkNodeScreen) {
-                    ((NetworkNodeScreen) currentScreenHandler).warning.text = warning;
+                    ((NetworkNodeScreen) currentScreenHandler).warning.text = new TranslatableText(warning);
                     ((NetworkNodeScreen) currentScreenHandler).warning.ticksRemaining = 400;
                 } else if (currentScreenHandler instanceof NetworkConfigureScreen) {
-                    ((NetworkConfigureScreen) currentScreenHandler).warning.text = warning;
+                    ((NetworkConfigureScreen) currentScreenHandler).warning.text = new TranslatableText(warning);
                     ((NetworkConfigureScreen) currentScreenHandler).warning.ticksRemaining = 400;
                 }
             });

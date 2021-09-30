@@ -23,6 +23,21 @@
   "gui.wirelessnetworks.network.receive": "Máximo de energia que a rede pode receber por tick.",
   "gui.wirelessnetworks.network.store": "Máximo de energia que a rede pode armazenar.",
 
-  "gui.wirelessnetworks.network.suggestion": "ID da rede..."
+  "gui.wirelessnetworks.network.suggestion": "ID da rede...",
 
+
+  "wirelessnetworks.input": "Entrada de Energia",
+  "wirelessnetworks.output": "Saída de Energia",
+  "wirelessnetworks.capacity": "Capacidade",
+
+  "warning.wirelessnetworks.network.invalid": "%s inválido(a)!",
+  "warning.wirelessnetworks.network.invalid.numbers.only": "%s inválido(a)! Apenas números são permitidos.",
+
+  "warning.wirelessnetworks.network.doesnt.exist": "Esta rede não existe mais!",
+  "warning.wirelessnetworks.network.modify.dont.own": "Você não pode modificar redes que não te pertencem!",
+
+  "warning.wirelessnetworks.network.id.empty": "ID da rede não pode ser vazio!",
+  "warning.wirelessnetworks.network.id.characters": "O ID da rede pode conter no máximo 10 caracteres.",
+
+  "warning.wirelessnetworks.network.misc": "Você não pode usar essa rede. Isso não deveria acontecer..."
 }

@@ -101,7 +101,7 @@ public class WNetworkListEntry extends WWidget {
     }
 
     @Override
-    public void addTooltip(TooltipBuilder tooltip) { //TODO: add energy info to tooltip.
+    public void addTooltip(TooltipBuilder tooltip) {
         getOwnerUuid().ifPresent((s) -> {
             if (s.equals(owner.toString())) {
                 tooltip.add(new TranslatableText("gui.wirelessnetworks.network.owned"));

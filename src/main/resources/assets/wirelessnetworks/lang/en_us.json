@@ -23,6 +23,21 @@
   "gui.wirelessnetworks.network.receive": "Energy limit this network can receive per tick.",
   "gui.wirelessnetworks.network.store": "Energy limit this network can store.",
 
-  "gui.wirelessnetworks.network.suggestion": "Network ID..."
+  "gui.wirelessnetworks.network.suggestion": "Network ID...",
 
+
+  "wirelessnetworks.input": "Input",
+  "wirelessnetworks.output": "Output",
+  "wirelessnetworks.capacity": "Capacity",
+
+  "warning.wirelessnetworks.network.invalid": "Invalid %s!",
+  "warning.wirelessnetworks.network.invalid.numbers.only": "Invalid %s! Only numbers are allowed.",
+
+  "warning.wirelessnetworks.network.doesnt.exist": "This network no longer exists!",
+  "warning.wirelessnetworks.network.modify.dont.own": "You cannot modify networks you do not own!",
+
+  "warning.wirelessnetworks.network.id.empty": "Network ID cannot be empty!",
+  "warning.wirelessnetworks.network.id.characters": "Network ID can only have 10 characters at most.",
+
+  "warning.wirelessnetworks.network.misc": "You cannot use this network. This should not have happened..."
 }

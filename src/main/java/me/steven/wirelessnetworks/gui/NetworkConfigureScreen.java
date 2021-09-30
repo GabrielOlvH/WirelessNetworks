@@ -130,9 +130,9 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         };
         save.setLabel(new TranslatableText("gui.wirelessnetworks.network.save"));
         save.setOnClick(() -> {
-            OptionalLong capacity = validate(energyCapacityField, "energy capacity");
-            OptionalLong input = validate(maxInputField, "maximum input");
-            OptionalLong output = validate(maxOutputField, "maximum output");
+            OptionalLong input = validate(maxInputField, new TranslatableText("wirelessnetworks.input"));
+            OptionalLong output = validate(maxOutputField, new TranslatableText("wirelessnetworks.output"));
+            OptionalLong capacity = validate(energyCapacityField, new TranslatableText("wirelessnetworks.capacity"));
             if (!capacity.isPresent() || !input.isPresent() || !output.isPresent()) return;
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
@@ -155,17 +155,17 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             networkIdField.requestFocus();
     }
 
-    private OptionalLong validate(WTextField field, String title) {
+    private OptionalLong validate(WTextField field, TranslatableText title) {
         String text = field.getText();
         if (!NUMBER_PATTERN.matcher(text).matches()) {
-            warning.text = "Invalid " + title + "! Only numbers are allowed.";
+            warning.text = new TranslatableText("warning.wirelessnetworks.network.invalid.numbers.only", title);
             warning.ticksRemaining = 400;
             return OptionalLong.empty();
         }
         try {
             return OptionalLong.of(Long.parseLong(text));
         } catch (NumberFormatException e) {
-            warning.text = "Invalid " + title + "!";
+            warning.text = new TranslatableText("warning.wirelessnetworks.network.invalid", title);
             warning.ticksRemaining = 400;
             return OptionalLong.empty();
         }

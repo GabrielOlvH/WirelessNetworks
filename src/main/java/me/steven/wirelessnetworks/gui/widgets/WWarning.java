@@ -10,12 +10,13 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Matrix4f;
 
 public class WWarning extends WWidget {
 
     public int ticksRemaining;
-    public String text;
+    public TranslatableText text;
 
     public float bgWidth = 0;
 
@@ -25,7 +26,7 @@ public class WWarning extends WWidget {
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
         x = (((HandledScreenAccessor)currentScreen).getX()) + parent.getWidth() / 2;
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int width = textRenderer.getWidth(text);
+        int width = textRenderer.getWidth(text == null ? "" : text.getString()); // Evades NPE
         if (ticksRemaining < 0){
             if (bgWidth > 0)
             bgWidth -= width * 0.07;
@@ -73,7 +74,7 @@ public class WWarning extends WWidget {
         matrices.translate(0.0D, 0.0D, 400.0D);
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        if (bgWidth == textRenderer.getWidth(text)) {
+        if (bgWidth == textRenderer.getWidth(text == null ? "" : text.getString())) {
             textRenderer.draw(text, x, y, -1, true, matrix4f, immediate, false, 0, 15728880);
         }
         immediate.draw();
