@@ -1,4 +1,43 @@
 {
   "block.wirelessnetworks.node_block": "Network Node",
-  "item.wirelessnetworks.entangled_capacitor": "Entangled Capacitor"
+  "item.wirelessnetworks.entangled_capacitor": "Entangled Capacitor",
+
+
+  "gui.wirelessnetworks.network.select": "Select a Network",
+  "gui.wirelessnetworks.network.create": "Create Network",
+  "gui.wirelessnetworks.network.edit": "Edit Network",
+
+  "gui.wirelessnetworks.network.save": "Save",
+
+  "gui.wirelessnetworks.network.public": "Make network public",
+  "gui.wirelessnetworks.network.private": "Make network private",
+
+  "gui.wirelessnetworks.network.owned": "You own this network",
+  "gui.wirelessnetworks.network.ownedby": "This network is owned by %s",
+
+  "gui.wirelessnetworks.network.delete": "Delete Network",
+  "gui.wirelessnetworks.network.delete.confirm" : "Hold Shift + Click again to delete",
+
+
+  "gui.wirelessnetworks.network.send": "Energy limit this network can send per tick.",
+  "gui.wirelessnetworks.network.receive": "Energy limit this network can receive per tick.",
+  "gui.wirelessnetworks.network.store": "Energy limit this network can store.",
+
+  "gui.wirelessnetworks.network.suggestion": "Network ID...",
+
+
+  "wirelessnetworks.input": "Input",
+  "wirelessnetworks.output": "Output",
+  "wirelessnetworks.capacity": "Capacity",
+
+  "warning.wirelessnetworks.network.invalid": "Invalid %s!",
+  "warning.wirelessnetworks.network.invalid.numbers.only": "Invalid %s! Only numbers are allowed.",
+
+  "warning.wirelessnetworks.network.doesnt.exist": "This network no longer exists!",
+  "warning.wirelessnetworks.network.modify.dont.own": "You cannot modify networks you do not own!",
+
+  "warning.wirelessnetworks.network.id.empty": "Network ID cannot be empty!",
+  "warning.wirelessnetworks.network.id.characters": "Network ID can only have 10 characters at most.",
+
+  "warning.wirelessnetworks.network.misc": "You cannot use this network. This should not have happened..."
 }

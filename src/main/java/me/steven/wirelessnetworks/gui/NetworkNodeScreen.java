@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -50,9 +51,9 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
                 if (confirm.get() == 1) {
-                    tooltip.add(new LiteralText("Hold Shift + Click again to delete"));
+                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.delete.confirm"));
                 } else {
-                    tooltip.add(new LiteralText("Delete network"));
+                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.delete"));
                 }
             }
         };
@@ -73,10 +74,10 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         panel.add(warning, 0, 0);
         warning.setLocation(0, -5);
 
-        WLabel title = new WLabel(new LiteralText("Network Node"), -1);
+        WLabel title = new WLabel(new TranslatableText("block.wirelessnetworks.node_block"), -1);
         panel.add(title, 0, 1);
 
-        WLabel label = new WLabel(new LiteralText("Select a network"), -1);
+        WLabel label = new WLabel(new TranslatableText("gui.wirelessnetworks.network.select"), -1);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         String[] selectedNetworkId = {null};
         if (blockEntity instanceof NetworkNodeBlockEntity) {
@@ -97,6 +98,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
                 buf.writeString(networkId);
                 selectedNetworkId[0] = networkId;
                 ClientPlayNetworking.send(PacketHelper.SELECT_NETWORK, buf);
+
             });
             entry.setIsSelected(() -> networkId.equals(selectedNetworkId[0]));
             entry.setSize(73, 15);
@@ -110,7 +112,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WNoBGButton createButton = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Create network"));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.create"));
             }
         };
         createButton.setOnClick(() -> {
@@ -127,7 +129,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WNoBGButton configureButton = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new LiteralText("Edit network"));
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.edit"));
             }
         };
         configureButton.setOnClick(() -> {
