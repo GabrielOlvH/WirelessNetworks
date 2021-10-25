@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,12 +40,16 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
     private static final Identifier ADD_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_add.png");
     private static final Identifier DELETE_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_delete.png");
     private static final Identifier EDIT_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_edit.png");
+    private static final Identifier INPUT_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_input.png");
+    private static final Identifier OUTPUT_TEXTURE_ID = new Identifier(WirelessNetworks.MOD_ID, "textures/gui/icon_output.png");
 
     @Environment(EnvType.CLIENT)
     public final WWarning warning = new WWarning();
 
-    public NetworkNodeScreen(BlockPos pos, List<String> networks, int syncId, PlayerInventory playerInventory) {
+    public NetworkNodeScreen(BlockPos pos, boolean input, List<String> networks, int syncId, PlayerInventory playerInventory) {
         super(WirelessNetworks.NODE_SCREEN_TYPE, syncId, playerInventory);
+
+        boolean[] i = { input };
 
         AtomicInteger confirm = new AtomicInteger();
         WNoBGButton deleteNetwork = new WNoBGButton() {
@@ -165,8 +170,35 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         deleteNetwork.setSize(8, 8);
         deleteNetwork.setIcon(DELETE_TEXTURE_ID);
 
+
+        WNoBGButton modeBtn = new WNoBGButton() {
+            @Override
+            public void addTooltip(TooltipBuilder tooltip) {
+                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.input." + i[0]));
+            }
+        };
+        modeBtn.setLabel(new TranslatableText("gui.wirelessnetworks.network.input." + input));
+        modeBtn.setOnClick(() -> {
+            i[0] = !i[0];
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeBlockPos(pos);
+            buf.writeBoolean(i[0]);
+            ClientPlayNetworking.send(PacketHelper.MODE_PACKET, buf);
+            modeBtn.setIcon(getTexture(i[0]));
+        });
+        panel.add(modeBtn, 3, 6);
+        modeBtn.setLocation(2 * 18 + 9, 9 * 18 + 12);
+        modeBtn.setSize(8, 8);
+        modeBtn.setIcon(getTexture(i[0]));
+
         panel.validate(this);
     }
+
+    private Identifier getTexture(boolean input) {
+        if (input) return INPUT_TEXTURE_ID;
+        else return OUTPUT_TEXTURE_ID;
+    }
+
 
     @Override
     public void addPainters() {

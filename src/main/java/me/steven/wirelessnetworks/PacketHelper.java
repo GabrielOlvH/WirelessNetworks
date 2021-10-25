@@ -32,6 +32,8 @@ public class PacketHelper {
 
     public static final Identifier WARNING_PACKET = new Identifier(WirelessNetworks.MOD_ID, "warning_packet");
 
+    public static final Identifier MODE_PACKET = new Identifier(WirelessNetworks.MOD_ID, "mode_packet");
+
     public static void registerServer() {
         ServerPlayNetworking.registerGlobalReceiver(OPEN_CONFIGURE_SCREEN, (server, player, networkHandler, buf, sender) -> {
             BlockPos blockPos = buf.readBlockPos();
@@ -152,6 +154,19 @@ public class PacketHelper {
                 BlockEntity blockEntity = player.world.getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     player.openHandledScreen((NetworkNodeBlockEntity) blockEntity);
+                }
+            });
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(MODE_PACKET, (server, player, networkHandler, buf, sender) -> {
+            BlockPos pos = buf.readBlockPos();
+            boolean input = buf.readBoolean();
+
+            server.execute(() -> {
+                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                if (blockEntity instanceof NetworkNodeBlockEntity node) {
+                    node.setMode(input);
+                    node.markDirty();
                 }
             });
         });

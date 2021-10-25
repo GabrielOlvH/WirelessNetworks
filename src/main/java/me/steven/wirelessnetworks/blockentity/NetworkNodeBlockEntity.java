@@ -20,20 +20,41 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.EnergyStorageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Nameable, ExtendedScreenHandlerFactory, BlockEntityClientSerializable {
 
     private String networkId = null;
+    private boolean input = false;
 
     public NetworkNodeBlockEntity(BlockPos pos, BlockState state) {
         super(WirelessNetworks.NODE_BLOCK_ENTITY_TYPE, pos, state);
+    }
+
+    public EnumSet<Direction> validDirections = EnumSet.allOf(Direction.class);
+
+    public static void tick(World world, BlockPos pos, NetworkNodeBlockEntity blockEntity) {
+        if (blockEntity.isOutput()) {
+            for (Direction dir : Direction.values()) {
+                if (blockEntity.validDirections.contains(dir)) {
+                    EnergyStorage sourceIo = EnergyStorage.SIDED.find(world, pos, dir);
+                    EnergyStorage targetIo = EnergyStorage.SIDED.find(world, pos.offset(dir), dir.getOpposite());
+
+                    if (targetIo == null || sourceIo == null) {
+                        blockEntity.validDirections.remove(dir);
+                    } else if (sourceIo.supportsExtraction() && targetIo.supportsInsertion()) {
+                        EnergyStorageUtil.move(sourceIo, targetIo, Long.MAX_VALUE, null);
+                    }
+                }
+            }
+        }
     }
 
     public String getNetworkId() {
@@ -47,6 +68,18 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     public Optional<Network> getNetwork() {
         if (world == null) return Optional.empty();
         return NetworkState.getOrCreate(((ServerWorld) world).getServer()).getNetworkHandler(networkId);
+    }
+
+    public void setMode(boolean input) {
+        this.input = input;
+    }
+
+    public boolean isInput() {
+        return input;
+    }
+
+    public boolean isOutput() {
+        return !input;
     }
 
     @Override
@@ -66,12 +99,13 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
                 .filter((entry) -> entry.getValue().canInteract(player))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return new NetworkNodeScreen(pos, keys, syncId, inv);
+        return new NetworkNodeScreen(pos, input, keys, syncId, inv);
     }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeBlockPos(pos);
+        buf.writeBoolean(input);
         Set<String> keys = NetworkState.getOrCreate(((ServerWorld) world).getServer())
                 .getNetworks()
                 .entrySet()
@@ -87,6 +121,7 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     public NbtCompound writeNbt(NbtCompound tag) {
         if (networkId != null)
             tag.putString("NetworkID", networkId);
+        tag.putBoolean("Input", input);
         return super.writeNbt(tag);
     }
 
@@ -95,18 +130,21 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
         super.readNbt(tag);
         if (tag.contains("NetworkID"))
             networkId = tag.getString("NetworkID");
+        input = tag.getBoolean("Input");
     }
 
     @Override
     public void fromClientTag(NbtCompound tag) {
         if (tag.contains("NetworkID"))
             networkId = tag.getString("NetworkID");
+        input = tag.getBoolean("Input");
     }
 
     @Override
     public NbtCompound toClientTag(NbtCompound tag) {
         if (networkId != null)
             tag.putString("NetworkID", networkId);
+        tag.putBoolean("Input", input);
         return tag;
     }
 }

@@ -4,6 +4,7 @@ import me.steven.wirelessnetworks.block.NetworkBlock;
 import me.steven.wirelessnetworks.blockentity.NetworkNodeBlockEntity;
 import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
+import me.steven.wirelessnetworks.network.ExposedNetwork;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -39,12 +40,13 @@ public class WirelessNetworks implements ModInitializer {
 	public static final ExtendedScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkNodeScreen>)
 			ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "node_screen"), (syncId, inventory, buf) -> {
 				BlockPos blockPos = buf.readBlockPos();
+				boolean input = buf.readBoolean();
 				int size = buf.readInt();
 				List<String> keys = new ArrayList<>();
 				for (int index = 0; index < size; index++) {
 					keys.add(buf.readString(32767));
 				}
-				return new NetworkNodeScreen(blockPos, keys, syncId, inventory);
+				return new NetworkNodeScreen(blockPos, input, keys, syncId, inventory);
 			});
 
 	public static final ExtendedScreenHandlerType<NetworkConfigureScreen> CONFIGURE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkConfigureScreen>)
@@ -69,12 +71,12 @@ public class WirelessNetworks implements ModInitializer {
 
 		EnergyStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> {
 			if (
-					blockEntity instanceof NetworkNodeBlockEntity
+					blockEntity instanceof NetworkNodeBlockEntity node
 							&& blockEntity.getWorld() != null
 							&& !blockEntity.getWorld().isClient
 							&& direction != Direction.UP
 			) {
-				return ((NetworkNodeBlockEntity) blockEntity).getNetwork().orElse(null);
+				return ((NetworkNodeBlockEntity) blockEntity).getNetwork().map((n) -> new ExposedNetwork(n, node.isInput())).orElse(null);
 			}
 			return null;
 		}, NODE_BLOCK_ENTITY_TYPE);
