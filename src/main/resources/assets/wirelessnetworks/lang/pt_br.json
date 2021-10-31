@@ -8,6 +8,9 @@
   "gui.wirelessnetworks.network.edit": "Editar Rede",
 
   "gui.wirelessnetworks.network.save": "Salvar",
+  
+  "gui.wirelessnetworks.network.input.true": "Entrada de Energia",
+  "gui.wirelessnetworks.network.input.false": "Saída de Energia",
 
   "gui.wirelessnetworks.network.public": "Tornar rede pública",
   "gui.wirelessnetworks.network.private": "Tornar rede privada",
