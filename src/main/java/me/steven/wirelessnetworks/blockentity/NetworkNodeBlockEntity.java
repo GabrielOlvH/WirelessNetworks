@@ -1,17 +1,20 @@
 package me.steven.wirelessnetworks.blockentity;
 
+import com.google.common.base.Preconditions;
 import me.steven.wirelessnetworks.WirelessNetworks;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.Network;
 import me.steven.wirelessnetworks.network.NetworkState;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,7 +32,7 @@ import team.reborn.energy.api.EnergyStorageUtil;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Nameable, ExtendedScreenHandlerFactory, BlockEntityClientSerializable {
+public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Nameable, ExtendedScreenHandlerFactory {
 
     private String networkId = null;
     private boolean input = false;
@@ -118,11 +121,10 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         if (networkId != null)
             tag.putString("NetworkID", networkId);
         tag.putBoolean("Input", input);
-        return super.writeNbt(tag);
     }
 
     @Override
@@ -133,18 +135,25 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
         input = tag.getBoolean("Input");
     }
 
+    @Nullable
     @Override
-    public void fromClientTag(NbtCompound tag) {
-        if (tag.contains("NetworkID"))
-            networkId = tag.getString("NetworkID");
-        input = tag.getBoolean("Input");
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
     }
 
     @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        if (networkId != null)
-            tag.putString("NetworkID", networkId);
-        tag.putBoolean("Input", input);
-        return tag;
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound nbt = super.toInitialChunkDataNbt();
+        writeNbt(nbt);
+        return nbt;
+    }
+
+    // Thank you Fabric API
+    public void sync() {
+        Preconditions.checkNotNull(world); // Maintain distinct failure case from below
+        if (!(world instanceof ServerWorld serverWorld))
+            throw new IllegalStateException("Cannot call sync() on the logical client! Did you check world.isClient first?");
+
+        serverWorld.getChunkManager().markForUpdate(getPos());
     }
 }
