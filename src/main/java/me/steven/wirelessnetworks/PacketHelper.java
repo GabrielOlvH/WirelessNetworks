@@ -132,6 +132,7 @@ public class PacketHelper {
                     ((NetworkNodeBlockEntity) blockEntity).setNetworkId(networkId);
                     blockEntity.markDirty();
                     ((NetworkNodeBlockEntity) blockEntity).sync();
+                    blockEntity.getWorld().updateNeighbors(pos, blockEntity.getCachedState().getBlock());
                 }
             });
         });

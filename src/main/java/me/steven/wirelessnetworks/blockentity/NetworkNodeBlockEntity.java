@@ -48,9 +48,10 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
             for (Direction dir : Direction.values()) {
                 if (blockEntity.validDirections.contains(dir)) {
                     EnergyStorage sourceIo = EnergyStorage.SIDED.find(world, pos, dir);
+                    if (sourceIo == null) continue;
                     EnergyStorage targetIo = EnergyStorage.SIDED.find(world, pos.offset(dir), dir.getOpposite());
 
-                    if (targetIo == null || sourceIo == null) {
+                    if (targetIo == null) {
                         blockEntity.validDirections.remove(dir);
                     } else if (sourceIo.supportsExtraction() && targetIo.supportsInsertion()) {
                         EnergyStorageUtil.move(sourceIo, targetIo, Long.MAX_VALUE, null);

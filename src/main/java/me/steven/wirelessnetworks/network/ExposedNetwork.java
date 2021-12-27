@@ -1,6 +1,5 @@
 package me.steven.wirelessnetworks.network;
 
-import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import team.reborn.energy.api.EnergyStorage;
@@ -25,18 +24,20 @@ public class ExposedNetwork extends SnapshotParticipant<Long> implements EnergyS
     public long getCapacity() { return network.getCapacity(); }
 
     @Override
-    public boolean supportsInsertion() { return network.supportsInsertion() && input; }
+    public boolean supportsInsertion() { return network.supportsInsertion(); }
 
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
+        if (!input) return 0;
         return network.insert(maxAmount, transaction);
     }
 
     @Override
-    public boolean supportsExtraction() { return network.supportsExtraction() && !input; }
+    public boolean supportsExtraction() { return network.supportsExtraction(); }
 
     @Override
     public long extract(long maxAmount, TransactionContext transaction) {
+        if (input) return 0;
         return network.extract(maxAmount, transaction);
     }
 
