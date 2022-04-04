@@ -1,0 +1,6 @@
+{
+    "replace": false,
+    "values":[
+        "wirelessnetworks:node_block"
+    ]
+}
