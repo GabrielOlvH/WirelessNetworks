@@ -31,7 +31,7 @@ public class WirelessNetworks implements ModInitializer {
 
 	public static final String MOD_ID = "wirelessnetworks";
 
-	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).strength(2f).breakByTool(FabricToolTags.PICKAXES, 2).nonOpaque());
+	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).strength(2f).nonOpaque().requiresTool());
 	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings().group(ItemGroup.SEARCH));
 	public static final BlockEntityType<NetworkNodeBlockEntity> NODE_BLOCK_ENTITY_TYPE
 			= FabricBlockEntityTypeBuilder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
