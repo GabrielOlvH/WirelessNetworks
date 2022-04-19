@@ -8,14 +8,14 @@ import me.steven.wirelessnetworks.network.ExposedNetwork;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -36,30 +36,32 @@ public class WirelessNetworks implements ModInitializer {
 			= FabricBlockEntityTypeBuilder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
 	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings().group(ItemGroup.SEARCH));
 
-	public static final ExtendedScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkNodeScreen>)
-			ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "node_screen"), (syncId, inventory, buf) -> {
-				BlockPos blockPos = buf.readBlockPos();
-				boolean input = buf.readBoolean();
-				int size = buf.readInt();
-				List<String> keys = new ArrayList<>();
-				for (int index = 0; index < size; index++) {
-					keys.add(buf.readString(32767));
-				}
-				return new NetworkNodeScreen(blockPos, input, keys, syncId, inventory);
-			});
+	public static final ScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = Registry.register(
+		Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
+			BlockPos blockPos = buf.readBlockPos();
+			boolean input = buf.readBoolean();
+			int size = buf.readInt();
+			List<String> keys = new ArrayList<>();
+			for (int index = 0; index < size; index++) {
+				keys.add(buf.readString(32767));
+			}
+			return new NetworkNodeScreen(blockPos, input, keys, syncId, inventory);
+		})
+	);
 
-	public static final ExtendedScreenHandlerType<NetworkConfigureScreen> CONFIGURE_SCREEN_TYPE = (ExtendedScreenHandlerType<NetworkConfigureScreen>)
-			ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "configure_node_screen"), (syncId, inventory, buf) -> {
-				BlockPos pos = buf.readBlockPos();
-				boolean isNewNetwork = buf.readBoolean();
-				String networkId = isNewNetwork ? null : buf.readString(32767);
-				long energyCapacity = buf.readLong();
-				long maxInput = buf.readLong();
-				long maxOutput = buf.readLong();
-				boolean isProtected = buf.readBoolean();
-				UUID owner = buf.readUuid();
-				return new NetworkConfigureScreen(pos, networkId, owner, isProtected, energyCapacity, maxInput, maxOutput, syncId, inventory);
-			});
+	public static final ScreenHandlerType<NetworkConfigureScreen> CONFIGURE_SCREEN_TYPE = Registry.register(
+		Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "configure_node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
+			BlockPos pos = buf.readBlockPos();
+			boolean isNewNetwork = buf.readBoolean();
+			String networkId = isNewNetwork ? null : buf.readString(32767);
+			long energyCapacity = buf.readLong();
+			long maxInput = buf.readLong();
+			long maxOutput = buf.readLong();
+			boolean isProtected = buf.readBoolean();
+			UUID owner = buf.readUuid();
+			return new NetworkConfigureScreen(pos, networkId, owner, isProtected, energyCapacity, maxInput, maxOutput, syncId, inventory);
+		})
+	);
 
 	@Override
 	public void onInitialize() {
