@@ -20,7 +20,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -87,10 +86,10 @@ public class NetworkNodeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public Text getName() { return new TranslatableText("block.wirelessnetworks.node_block"); }
+    public Text getName() { return Text.translatable("block.wirelessnetworks.node_block"); }
 
     @Override
-    public Text getDisplayName() { return new TranslatableText("block.wirelessnetworks.node_block"); }
+    public Text getDisplayName() { return Text.translatable("block.wirelessnetworks.node_block"); }
 
     @Nullable
     @Override

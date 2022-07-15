@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -47,12 +47,12 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
 
         if (networkId == null) {
             networkIdField = new WNoBGTextField();
-            networkIdField.setSuggestion(new TranslatableText("gui.wirelessnetworks.network.suggestion"));
+            networkIdField.setSuggestion(Text.translatable("gui.wirelessnetworks.network.suggestion"));
             panel.add(networkIdField, 0, 0);
             networkIdField.setMaxLength(10);
             networkIdField.setSize(80, 18);
         } else {
-            WLabel label = new WLabel(Utils.getDisplayId(networkId), -1);
+            WLabel label = new WLabel(Text.literal(Utils.getDisplayId(networkId)), -1);
             panel.add(label,0, 0);
             label.setLocation(4, 7);
         }
@@ -60,7 +60,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         WWidget energyCapacityTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.store"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.store"));
             }
         };
         panel.add(energyCapacityTooltip, 1, 3);
@@ -76,7 +76,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         WWidget maxInputTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.receive"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.receive"));
             }
         };
         panel.add(maxInputTooltip, 1, 1);
@@ -93,7 +93,7 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         WWidget maxOutputTooltip = new WWidget() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.send"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.send"));
             }
         };
         panel.add(maxOutputTooltip, 1, 2);
@@ -110,9 +110,9 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
                 if (getToggle())
-                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.public"));
+                    tooltip.add(Text.translatable("gui.wirelessnetworks.network.public"));
                 else
-                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.private"));
+                    tooltip.add(Text.translatable("gui.wirelessnetworks.network.private"));
             }
         };
         isProtectedToggle.setToggle(isProtected);
@@ -125,14 +125,14 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
         WNoBGButton save = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.save"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.save"));
             }
         };
-        save.setLabel(new TranslatableText("gui.wirelessnetworks.network.save"));
+        save.setLabel(Text.translatable("gui.wirelessnetworks.network.save"));
         save.setOnClick(() -> {
-            OptionalLong input = validate(maxInputField, new TranslatableText("wirelessnetworks.input"));
-            OptionalLong output = validate(maxOutputField, new TranslatableText("wirelessnetworks.output"));
-            OptionalLong capacity = validate(energyCapacityField, new TranslatableText("wirelessnetworks.capacity"));
+            OptionalLong input = validate(maxInputField, Text.translatable("wirelessnetworks.input"));
+            OptionalLong output = validate(maxOutputField, Text.translatable("wirelessnetworks.output"));
+            OptionalLong capacity = validate(energyCapacityField, Text.translatable("wirelessnetworks.capacity"));
             if (!capacity.isPresent() || !input.isPresent() || !output.isPresent()) return;
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
@@ -155,17 +155,17 @@ public class NetworkConfigureScreen extends SyncedGuiDescription {
             networkIdField.requestFocus();
     }
 
-    private OptionalLong validate(WTextField field, TranslatableText title) {
+    private OptionalLong validate(WTextField field, Text title) {
         String text = field.getText();
         if (!NUMBER_PATTERN.matcher(text).matches()) {
-            warning.text = new TranslatableText("warning.wirelessnetworks.network.invalid.numbers.only", title);
+            warning.text = Text.translatable("warning.wirelessnetworks.network.invalid.numbers.only", title);
             warning.ticksRemaining = 400;
             return OptionalLong.empty();
         }
         try {
             return OptionalLong.of(Long.parseLong(text));
         } catch (NumberFormatException e) {
-            warning.text = new TranslatableText("warning.wirelessnetworks.network.invalid", title);
+            warning.text = Text.translatable("warning.wirelessnetworks.network.invalid", title);
             warning.ticksRemaining = 400;
             return OptionalLong.empty();
         }

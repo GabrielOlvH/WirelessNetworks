@@ -14,7 +14,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -179,10 +179,10 @@ public class PacketHelper {
             client.execute(() -> {
                 ScreenHandler currentScreenHandler = client.player.currentScreenHandler;
                 if (currentScreenHandler instanceof NetworkNodeScreen) {
-                    ((NetworkNodeScreen) currentScreenHandler).warning.text = new TranslatableText(warning);
+                    ((NetworkNodeScreen) currentScreenHandler).warning.text = Text.translatable(warning);
                     ((NetworkNodeScreen) currentScreenHandler).warning.ticksRemaining = 400;
                 } else if (currentScreenHandler instanceof NetworkConfigureScreen) {
-                    ((NetworkConfigureScreen) currentScreenHandler).warning.text = new TranslatableText(warning);
+                    ((NetworkConfigureScreen) currentScreenHandler).warning.text = Text.translatable(warning);
                     ((NetworkConfigureScreen) currentScreenHandler).warning.ticksRemaining = 400;
                 }
             });

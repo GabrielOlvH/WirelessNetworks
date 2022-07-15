@@ -10,13 +10,13 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Matrix4f;
 
 public class WWarning extends WWidget {
 
     public int ticksRemaining;
-    public TranslatableText text;
+    public Text text;
 
     public float bgWidth = 0;
 
@@ -66,8 +66,8 @@ public class WWarning extends WWidget {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        bufferBuilder.end();
-        BufferRenderer.draw(bufferBuilder);
+
+        BufferRenderer.drawWithShader(bufferBuilder.end());
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
         VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());

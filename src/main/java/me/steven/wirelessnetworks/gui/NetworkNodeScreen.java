@@ -23,8 +23,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -56,9 +55,9 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
                 if (confirm.get() == 1) {
-                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.delete.confirm"));
+                    tooltip.add(Text.translatable("gui.wirelessnetworks.network.delete.confirm"));
                 } else {
-                    tooltip.add(new TranslatableText("gui.wirelessnetworks.network.delete"));
+                    tooltip.add(Text.translatable("gui.wirelessnetworks.network.delete"));
                 }
             }
         };
@@ -79,25 +78,25 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         panel.add(warning, 0, 0);
         warning.setLocation(0, -5);
 
-        WLabel title = new WLabel(new TranslatableText("block.wirelessnetworks.node_block"), -1);
+        WLabel title = new WLabel(Text.translatable("block.wirelessnetworks.node_block"), -1);
         panel.add(title, 0, 1);
 
-        WLabel label = new WLabel(new TranslatableText("gui.wirelessnetworks.network.select"), -1);
+        WLabel label = new WLabel(Text.translatable("gui.wirelessnetworks.network.select"), -1);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         String[] selectedNetworkId = {null};
         if (blockEntity instanceof NetworkNodeBlockEntity) {
             selectedNetworkId[0] = ((NetworkNodeBlockEntity) blockEntity).getNetworkId();
             if (selectedNetworkId[0] != null && networks.contains(selectedNetworkId[0])) {
-                label.setText(new LiteralText(Utils.getDisplayId(selectedNetworkId[0])));
+                label.setText(Text.literal(Utils.getDisplayId(selectedNetworkId[0])));
             }
         }
         panel.add(label, 0, 2);
         UUID uuid = playerInventory.player.getUuid();
         WListPanel<String, WNetworkListEntry> list = new WConfigScreenListPanel(networks, () -> new WNetworkListEntry(uuid, world), (networkId, entry) -> {
             entry.setId(networkId);
-            entry.setText(new LiteralText(Utils.getDisplayId(networkId)));
+            entry.setText(Text.literal(Utils.getDisplayId(networkId)));
             entry.setClickAction(() -> {
-                label.setText(new LiteralText(Utils.getDisplayId(networkId)));
+                label.setText(Text.literal(Utils.getDisplayId(networkId)));
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBlockPos(pos);
                 buf.writeString(networkId);
@@ -117,7 +116,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WNoBGButton createButton = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.create"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.create"));
             }
         };
         createButton.setOnClick(() -> {
@@ -134,7 +133,7 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WNoBGButton configureButton = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.edit"));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.edit"));
             }
         };
         configureButton.setOnClick(() -> {
@@ -174,10 +173,10 @@ public class NetworkNodeScreen extends SyncedGuiDescription {
         WNoBGButton modeBtn = new WNoBGButton() {
             @Override
             public void addTooltip(TooltipBuilder tooltip) {
-                tooltip.add(new TranslatableText("gui.wirelessnetworks.network.input." + i[0]));
+                tooltip.add(Text.translatable("gui.wirelessnetworks.network.input." + i[0]));
             }
         };
-        modeBtn.setLabel(new TranslatableText("gui.wirelessnetworks.network.input." + input));
+        modeBtn.setLabel(Text.translatable("gui.wirelessnetworks.network.input." + input));
         modeBtn.setOnClick(() -> {
             i[0] = !i[0];
             PacketByteBuf buf = PacketByteBufs.create();
