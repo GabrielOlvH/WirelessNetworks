@@ -10,6 +10,7 @@ import me.steven.wirelessnetworks.WirelessNetworks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -75,16 +76,16 @@ public class WNetworkListEntry extends WWidget {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (isSelected.get()) ScreenDrawing.coloredRect(matrices, x, y, width, height, 0x22000099);
-        ScreenDrawing.drawStringWithShadow(matrices, text.asOrderedText(),
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+        if (isSelected.get()) ScreenDrawing.coloredRect(context, x, y, width, height, 0x22000099);
+        ScreenDrawing.drawStringWithShadow(context, text.asOrderedText(),
                 HorizontalAlignment.LEFT, x, y + ((height - 8) / 2),
                 width, WLabel.DEFAULT_DARKMODE_TEXT_COLOR);
 
 
         int index = getId().indexOf(":");
         if (index > 0) {
-            ScreenDrawing.texturedRect(matrices, x + width - 8, y, 8, 8, PRIVATE_TEXTURE_ID, -1);
+            ScreenDrawing.texturedRect(context, x + width - 8, y, 8, 8, PRIVATE_TEXTURE_ID, -1);
         }
     }
 

@@ -107,7 +107,7 @@ public class PacketHelper {
                 else if (!isProtected && network.isProtected())
                     network.markPublic(state);
                 state.markDirty();
-                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     player.openHandledScreen((NetworkNodeBlockEntity) blockEntity);
                 }
@@ -127,7 +127,7 @@ public class PacketHelper {
                     sendWarning("warning.wirelessnetworks.network.misc", player);
                     return;
                 }
-                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     ((NetworkNodeBlockEntity) blockEntity).setNetworkId(networkId);
                     blockEntity.markDirty();
@@ -152,7 +152,7 @@ public class PacketHelper {
                 }
                 state.delete(networkId);
                 state.markDirty();
-                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity) {
                     player.openHandledScreen((NetworkNodeBlockEntity) blockEntity);
                 }
@@ -164,7 +164,7 @@ public class PacketHelper {
             boolean input = buf.readBoolean();
 
             server.execute(() -> {
-                BlockEntity blockEntity = player.world.getBlockEntity(pos);
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(pos);
                 if (blockEntity instanceof NetworkNodeBlockEntity node) {
                     node.setMode(input);
                     node.markDirty();

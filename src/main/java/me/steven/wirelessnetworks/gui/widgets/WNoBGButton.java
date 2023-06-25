@@ -5,6 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
@@ -17,10 +18,10 @@ public class WNoBGButton extends WButton {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
         Icon icon = getIcon();
         if (icon != null) {
-            icon.paint(matrices, x + 1, y + 1, 8);
+            icon.paint(context, x + 1, y + 1, 8);
         }
     }
 

@@ -5,6 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.WScrollBar;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class WConfigScreenScrollbar extends WScrollBar {
@@ -16,15 +17,14 @@ public class WConfigScreenScrollbar extends WScrollBar {
         super(Axis.VERTICAL);
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
         if (maxValue <= 0) return;
 
         if (axis == Axis.HORIZONTAL) {
-            ScreenDrawing.drawBeveledPanel(matrices, x + 1 + getHandlePosition(), y + 1, getHandleSize(), height - 2, TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
+            ScreenDrawing.drawBeveledPanel(context, x + 1 + getHandlePosition(), y + 1, getHandleSize(), height - 2, TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
         } else {
-            ScreenDrawing.drawBeveledPanel(matrices, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
+            ScreenDrawing.drawBeveledPanel(context, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), TOP_COLOR, MIDDLE_COLOR, BOTTOM_COLOR);
         }
     }
 }

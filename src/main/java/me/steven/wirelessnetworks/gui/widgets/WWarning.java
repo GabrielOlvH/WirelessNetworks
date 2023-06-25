@@ -7,11 +7,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 public class WWarning extends WWidget {
 
@@ -21,8 +22,8 @@ public class WWarning extends WWidget {
     public float bgWidth = 0;
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
         x = (((HandledScreenAccessor)currentScreen).getX()) + parent.getWidth() / 2;
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -41,7 +42,7 @@ public class WWarning extends WWidget {
         }
 
         if (bgWidth > 0) {
-            renderTooltipBackground(matrices, x - (int)bgWidth / 2, y, (int)bgWidth, textRenderer.fontHeight);
+            renderTooltipBackground(context.getMatrices(), x - (int)bgWidth / 2, y, (int)bgWidth, textRenderer.fontHeight);
         }
 
     }
@@ -63,19 +64,19 @@ public class WWarning extends WWidget {
         fillGradient(matrix4f, bufferBuilder, x - 3, y - 3, x + width + 3, y - 3 + 1, 400, 1347420415, 1347420415);
         fillGradient(matrix4f, bufferBuilder, x - 3, y + height + 2, x + width + 3, y + height + 3, 400, 1344798847, 1344798847);
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
+       // RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        BufferRenderer.drawWithShader(bufferBuilder.end());
+        BufferRenderer.draw(bufferBuilder.end());
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
+        //RenderSystem.enableTexture();
         VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
         matrices.translate(0.0D, 0.0D, 400.0D);
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         if (bgWidth == textRenderer.getWidth(text == null ? "" : text.getString())) {
-            textRenderer.draw(text, x, y, -1, true, matrix4f, immediate, false, 0, 15728880);
+            textRenderer.draw(text.getString(), x, y, -1, true, matrix4f, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880, false);
         }
         immediate.draw();
         matrices.pop();

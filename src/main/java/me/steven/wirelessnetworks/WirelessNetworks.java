@@ -10,16 +10,16 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import team.reborn.energy.api.EnergyStorage;
 
 import java.util.ArrayList;
@@ -30,14 +30,14 @@ public class WirelessNetworks implements ModInitializer {
 
 	public static final String MOD_ID = "wirelessnetworks";
 
-	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.of(Material.METAL).strength(2f).nonOpaque().requiresTool());
-	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings().group(ItemGroup.SEARCH));
+	public static final Block NODE_BLOCK = new NetworkBlock(FabricBlockSettings.create().strength(2f).nonOpaque().requiresTool());
+	public static final BlockItem NODE_BLOCK_ITEM = new BlockItem(NODE_BLOCK, new Item.Settings());
 	public static final BlockEntityType<NetworkNodeBlockEntity> NODE_BLOCK_ENTITY_TYPE
 			= FabricBlockEntityTypeBuilder.create(NetworkNodeBlockEntity::new, NODE_BLOCK).build(null);
-	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings().group(ItemGroup.SEARCH));
+	public static final Item ENTANGLED_CAPACITOR_ITEM = new Item(new Item.Settings());
 
 	public static final ScreenHandlerType<NetworkNodeScreen> NODE_SCREEN_TYPE = Registry.register(
-		Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
+		Registries.SCREEN_HANDLER, new Identifier(MOD_ID, "node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
 			BlockPos blockPos = buf.readBlockPos();
 			boolean input = buf.readBoolean();
 			int size = buf.readInt();
@@ -50,7 +50,7 @@ public class WirelessNetworks implements ModInitializer {
 	);
 
 	public static final ScreenHandlerType<NetworkConfigureScreen> CONFIGURE_SCREEN_TYPE = Registry.register(
-		Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "configure_node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
+		Registries.SCREEN_HANDLER, new Identifier(MOD_ID, "configure_node_screen"), new ExtendedScreenHandlerType<>((syncId, inventory, buf) -> {
 			BlockPos pos = buf.readBlockPos();
 			boolean isNewNetwork = buf.readBoolean();
 			String networkId = isNewNetwork ? null : buf.readString(32767);
@@ -65,10 +65,10 @@ public class WirelessNetworks implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "node_block"), NODE_BLOCK);
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "node_block"), NODE_BLOCK_ITEM);
-		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "node_block"), NODE_BLOCK_ENTITY_TYPE);
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "entangled_capacitor"), ENTANGLED_CAPACITOR_ITEM);
+		Registry.register(Registries.BLOCK, new Identifier(MOD_ID, "node_block"), NODE_BLOCK);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "node_block"), NODE_BLOCK_ITEM);
+		Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "node_block"), NODE_BLOCK_ENTITY_TYPE);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "entangled_capacitor"), ENTANGLED_CAPACITOR_ITEM);
 
 		EnergyStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> {
 			if (
