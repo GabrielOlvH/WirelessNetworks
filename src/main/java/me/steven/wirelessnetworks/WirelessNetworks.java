@@ -6,6 +6,7 @@ import me.steven.wirelessnetworks.gui.NetworkConfigureScreen;
 import me.steven.wirelessnetworks.gui.NetworkNodeScreen;
 import me.steven.wirelessnetworks.network.ExposedNetwork;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -14,6 +15,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
@@ -81,6 +83,11 @@ public class WirelessNetworks implements ModInitializer {
 			}
 			return null;
 		}, NODE_BLOCK_ENTITY_TYPE);
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(g -> {
+			g.add(ENTANGLED_CAPACITOR_ITEM);
+			g.add(NODE_BLOCK_ITEM);
+		});
 
 		PacketHelper.registerServer();
 	}
