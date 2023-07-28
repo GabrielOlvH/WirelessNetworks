@@ -1,0 +1,46 @@
+{
+  "block.wirelessnetworks.node_block": "网络节点",
+  "item.wirelessnetworks.entangled_capacitor": "纠缠电容器",
+
+
+  "gui.wirelessnetworks.network.select": "选择一个网络",
+  "gui.wirelessnetworks.network.create": "创建网络",
+  "gui.wirelessnetworks.network.edit": "编辑网络",
+
+  "gui.wirelessnetworks.network.save": "保存",
+
+  "gui.wirelessnetworks.network.input.true": "输入",
+  "gui.wirelessnetworks.network.input.false": "输出",
+
+  "gui.wirelessnetworks.network.public": "使网络公开",
+  "gui.wirelessnetworks.network.private": "使网络私有",
+
+  "gui.wirelessnetworks.network.owned": "你拥有这个网络",
+  "gui.wirelessnetworks.network.ownedby": "这个网络的所有者为%s",
+
+  "gui.wirelessnetworks.network.delete": "删除网络",
+  "gui.wirelessnetworks.network.delete.confirm" : "按住Shift并再次点击以删除",
+
+
+  "gui.wirelessnetworks.network.send": "这个网络每刻可以发送的能量限制。",
+  "gui.wirelessnetworks.network.receive": "这个网络每刻可以接收的能量限制。",
+  "gui.wirelessnetworks.network.store": "这个网络可以储存的能量限制。",
+
+  "gui.wirelessnetworks.network.suggestion": "网络ID……",
+
+
+  "wirelessnetworks.input": "输入",
+  "wirelessnetworks.output": "输出",
+  "wirelessnetworks.capacity": "容量",
+
+  "warning.wirelessnetworks.network.invalid": "无效的%s！",
+  "warning.wirelessnetworks.network.invalid.numbers.only": "无效的%s！只允许数字！",
+
+  "warning.wirelessnetworks.network.doesnt.exist": "这个网络已经不存在了！",
+  "warning.wirelessnetworks.network.modify.dont.own": "你不能修改不属于你的网络！",
+
+  "warning.wirelessnetworks.network.id.empty": "网络ID不能为空！",
+  "warning.wirelessnetworks.network.id.characters": "网络ID最多包含10个字符。",
+
+  "warning.wirelessnetworks.network.misc": "你不能使用此网络。这不应该发生的……"
+}
